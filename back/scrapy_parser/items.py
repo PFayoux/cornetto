@@ -32,9 +32,9 @@ statif_logger = logging.getLogger('statification')
 def remove_xml_element(element):
     """
 
-    :param element:
-    :type element:
-    :return:
+    @param element:
+    @type element:
+    @return
     ::
     """
     parent = element.getparent()
@@ -71,8 +71,8 @@ class MirroringItem(Item):
     def save(self, content=None):
         """
         Save the content into a file
-        :param content: content of a file
-        :type content: str
+        @param content: content of a file
+        @type content: str
         """
         if content is None:
             content = self['content']

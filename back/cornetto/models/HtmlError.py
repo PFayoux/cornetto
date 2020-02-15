@@ -41,10 +41,10 @@ class HtmlError(Base, StatificationLinkedObject):
         The constructor of the object HtmlError.
         Create a HtmlError by setting the attribute with the given parameters
 
-        :param s_error_code: the HTTP error code
-        :param s_url: The url that caused the error
-        :param s_source: the source url that contained the faulty url
-        :param statification: the statification that contain that error
+        @param s_error_code: the HTTP error code
+        @param s_url: The url that caused the error
+        @param s_source: the source url that contained the faulty url
+        @param statification: the statification that contain that error
         """
         self.error_code = s_error_code
         self.url = s_url
@@ -56,11 +56,11 @@ class HtmlError(Base, StatificationLinkedObject):
                              s_source: str) -> None:
         """
         Create and add a new HTML error type to the statification filled with the given parameters
-        :param session: the database session
-        :param statification: the statification that contain that error
-        :param s_code_error: the HTTP error code
-        :param s_url: The url that caused the error
-        :param s_source: the source url that contained the faulty url
+        @param session: the database session
+        @param statification: the statification that contain that error
+        @param s_code_error: the HTTP error code
+        @param s_url: The url that caused the error
+        @param s_source: the source url that contained the faulty url
 
         """
         if session and statification and s_code_error and s_url and s_source:
@@ -73,7 +73,7 @@ class HtmlError(Base, StatificationLinkedObject):
         """
         Create a python dict from the source object
         :implement
-        :return: A python dict
+        @return A python dict
         """
         return {'id': self.id, 'error_code': self.error_code, 'url': self.url, 'source': self.source}
 
@@ -82,9 +82,9 @@ class HtmlError(Base, StatificationLinkedObject):
         """
         Get the object linked to the statification id passed in parameter
         :implement
-        :param session: The database session
-        :param i_statification_id: the id of the statification
-        :return: the corresponding object(s) linked to the statification id
+        @param session: The database session
+        @param i_statification_id: the id of the statification
+        @return the corresponding object(s) linked to the statification id
         """
         try:
             results = session.query(HtmlError).filter(HtmlError.statification_id == i_statification_id)

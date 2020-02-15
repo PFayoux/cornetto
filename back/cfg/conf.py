@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 """
 
 # APPS CONF
+
 DEBUG = False
 LOGLEVEL = 'INFO'
 
@@ -27,37 +28,47 @@ API_LOGFILE = '/opt/cornetto/log/api.log'
 # the path to the virtual env, it is used to start scrapy as a subprocess
 PYTHONPATH = '/opt/cornetto/venv/lib/python3.6/site-packages/'
 
-# define the project directory where the scrapy_cmd.py file is
+# define the project directory, it should point to your installation of cornetto
 PROJECT_DIRECTORY = '/opt/cornetto/'
+
 # define the logfile used for the current statification
 LOGFILE = '/opt/cornetto/log/statif.log'
+
 # define the file used to store the pid of the statification process
 PIDFILE = '/opt/cornetto/.pid.data'
+
 # define the lock file use to block operation
 LOCKFILE = '/opt/cornetto/.lock_access'
-# define the crawler progess counter file (file that store the count of file crawled) BEWARE modify MirroringSpider.py too if you change it
+
+# define the file that will contain the number of crawled file
+# it is updated during the statification process
+# BEWARE modify scrapy_parser/spiders/MirroringSpider.py too if you change the path
 CRAWLER_PROGRESS_COUNTER_FILE = '/opt/cornetto/.crawlerProgressCounterFile.txt'
+
 # define the path to the file that will store the status of background process
 STATUS_BACKGROUND = '/opt/cornetto/statusBackground.json'
 
+# The path to the script that will be called to upload the statification to a production server
+PUSH_TO_PROD_SCRIPT='/opt/cornetto/push_to_prod.sh'
+
+
 # DATABASE
 
-# desactivate tracking of modification for SQLAlchemy session (take extra resources if enabled)
+# deactivate tracking of modification for SQLAlchemy session (take extra resources if enabled)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # the uri of the database
 DATABASE_URI = 'sqlite:////opt/cornetto/cornetto.db'
 
-# GIT CONFIG
 
-# define the url for git, to be adapted by the user
-URL_GIT = 'ssh://url.git.fr/repo/static'
-# define the url for the production server
-URL_GIT_PROD = ['/opt/cornetto/git_prod']
-# define the repository where the statification should be stored (local git repository)
-STATIC_REPOSITORY = '/opt/cornetto/git_static'
-# define the repository where the statification to visualize should be stored
-VISUALIZE_REPOSITORY = '/opt/cornetto/git_visualize'
+# DIRECTORY CONFIGURATION
+
+# define the directory where the statification should be created
+STATIC_REPOSITORY = '/opt/cornetto/static/'
+# define the directory where the statification to visualize should be deployed
+VISUALIZE_REPOSITORY = '/opt/cornetto/visualize/'
+# define the directory where the archives of statifications should be stored
+ARCHIVE_REPOSITORY = '/opt/cornetto/archive/'
 
 
 # CRAWLER CONF

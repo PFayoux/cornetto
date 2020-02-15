@@ -43,21 +43,21 @@ class StatificationProcess:
                  s_url_regex: str = '', s_url_replacement: str = ''):
         """
         Initialize a StatificationProcess thread with the specified settings
-        :param s_logger: the id of the logger
-        :param s_repository_path: the path to the git repository folder for statification
-        :param s_python_path: the path to the virtual env libs where scrapy is
-        :param s_urls: the url to be crawled
-        :param s_domains: the domains authorized to be crawled
-        :param s_log_file: the path to the log file
-        :param s_project_directory: the path to the source
-        :param s_database_uri: the uri of the database
-        :param s_pid_file: the path to the file that will store the subprocess id
-        :param s_lock_file: the path to the lockfile
-        :param s_crawler_progress_counter_file: the path to the file that will store the count of crawled files
-        :param s_delete_files: the list of files to be deleted at the end of the statification process
-        :param s_delete_directories: the list of directories to be deleted at the end of the statification process
-        :param s_url_regex: the regex to identify url to be replaced by s_url_replacement
-        :param s_url_replacement: the new url to set to replace the match made by s_url_regex
+        @param s_logger: the id of the logger
+        @param s_repository_path: the path to the git repository folder for statification
+        @param s_python_path: the path to the virtual env libs where scrapy is
+        @param s_urls: the url to be crawled
+        @param s_domains: the domains authorized to be crawled
+        @param s_log_file: the path to the log file
+        @param s_project_directory: the path to the source
+        @param s_database_uri: the uri of the database
+        @param s_pid_file: the path to the file that will store the subprocess id
+        @param s_lock_file: the path to the lockfile
+        @param s_crawler_progress_counter_file: the path to the file that will store the count of crawled files
+        @param s_delete_files: the list of files to be deleted at the end of the statification process
+        @param s_delete_directories: the list of directories to be deleted at the end of the statification process
+        @param s_url_regex: the regex to identify url to be replaced by s_url_replacement
+        @param s_url_replacement: the new url to set to replace the match made by s_url_regex
         """
         self.logger = logging.getLogger(s_logger)
         self.s_repository_path = s_repository_path
@@ -79,7 +79,7 @@ class StatificationProcess:
     def is_running(self) -> bool:
         """
         Check if the statification process is running
-        :return: True if the process is currently running, false otherwise
+        @return True if the process is currently running, false otherwise
         """
         # open the pid file in read mode
         try:
@@ -98,8 +98,8 @@ class StatificationProcess:
     def stop(self, session: Session, success: bool = False):
         """
         Stop the statification process
-        :param session : the database session
-        :param success : a boolean to know if the process has been finish successfully or not,
+        @param session : the database session
+        @param success : a boolean to know if the process has been finish successfully or not,
                          by default it's unsuccessful
         """
 
@@ -154,9 +154,9 @@ class StatificationProcess:
     def done(self, cmd: str, success: bool, exit_code: int):
         """
         That method is called after the statification process has finish
-        :param cmd: the string containing the command that launched scrapy
-        :param success: a boolean , true if successful, false otherwise
-        :param exit_code: the exit code that was return by the command
+        @param cmd: the string containing the command that launched scrapy
+        @param success: a boolean , true if successful, false otherwise
+        @param exit_code: the exit code that was return by the command
         """
         self.logger.info("the process has finished with exit code : " + str(exit_code))
 
@@ -189,10 +189,10 @@ class StatificationProcess:
     def start(self, session: Session, s_designation: str, s_description: str, s_user: str):
         """
         Start a statification process with scrapy.
-        :param session: the database session
-        :param s_designation:  the designation of the new statification
-        :param s_description: the description of the new statification
-        :param s_user: the name of the user which started the operation
+        @param session: the database session
+        @param s_designation:  the designation of the new statification
+        @param s_description: the description of the new statification
+        @param s_user: the name of the user which started the operation
         :raise ValueError if one parameter is missing
         """
 
@@ -301,7 +301,7 @@ class StatificationProcess:
         """
         This methode create database object associated to the statification with the result of the log
         that scrapy has generated.
-        :param session
+        @param session
         :raise NoResultFound if there is no statification with empty commit sha
         """
 

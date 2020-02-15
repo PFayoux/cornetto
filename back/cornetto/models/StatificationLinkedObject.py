@@ -37,9 +37,9 @@ class StatificationLinkedObject(CornettoObject):
     def get_from_statification_id(session: Session, i_statification_id: Column) -> Any:
         """
         Get the object linked to the statification id passed in parameter
-        :param session: The database session
-        :param i_statification_id: the id of the statification
-        :return: the corresponding object(s) linked to the statification id
+        @param session: The database session
+        @param i_statification_id: the id of the statification
+        @return the corresponding object(s) linked to the statification id
         """
         raise NotImplementedError()
 

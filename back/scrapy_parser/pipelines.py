@@ -29,8 +29,8 @@ class MirroringPipeline(object):
     def process_item(self, item, spider):
         """
         Pipeline that link a MirroringSpider to the MirroringItem
-        :type item: Object
-        :type spider: MirroringSpider
+        @type item: Object
+        @type spider: MirroringSpider
         """
         if isinstance(spider, MirroringSpider) and isinstance(item, MirroringItem):
             item.process()

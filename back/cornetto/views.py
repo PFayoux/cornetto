@@ -21,9 +21,12 @@ import functools
 from typing import Any, Dict
 from flask import jsonify, request, current_app
 from flask.blueprints import Blueprint
-from cornetto.services import is_access_locked, lock_access, unlock_access, get_nb_page_crawled, \
-    service_get_last_statif_infos, get_background_status_file_content, service_get_satif_list, \
-    service_get_statif_info, service_do_apply_prod, service_do_commit, service_get_statif_count, service_do_start_statif
+from cornetto.services import  \
+    service_get_last_statif_infos, service_get_satif_list, \
+    service_get_statif_info, service_do_apply_prod, service_get_statif_count, \
+    service_do_start_statif, service_do_save
+from cornetto.service_utils import is_access_locked, lock_access, unlock_access, get_nb_page_crawled,\
+    get_background_status_file_content
 
 bp = Blueprint("cornetto", __name__)
 
@@ -48,8 +51,8 @@ def commit_required(f):
     """
     @functools.wraps(f)
     def commit_required_wrapped(*args, **kwargs):
-        s_commit = request.values.get('commit')
-        if s_commit is None:
+        s_archive_sha = request.values.get('commit')
+        if s_archive_sha is None:
             current_app.logger.error("The commit parameter is empty")
             # return an error code
             return {
@@ -178,7 +181,7 @@ def statification_status() -> Dict[str, Any]:
     - i_nb_item_to_crawl :  the number of item that have been crawled during the last statification, it will be used
                             as a reference of the number of items to crawl to the next statification. If there is no
                             statification in the database it will be set to 100 by default.
-    :return a python dict containing all the above information :
+    @return a python dict containing all the above information :
             **Example**:
 
               The default status when launching the api for the first time should be this one.
@@ -240,7 +243,7 @@ def statification_status() -> Dict[str, Any]:
 @build_json()
 def get_statif_count() -> Dict[str, int]:
     """
-    :return: the number of saved statifications
+    @return the number of saved statifications
     """
     return service_get_statif_count()
 
@@ -250,7 +253,7 @@ def get_statif_count() -> Dict[str, int]:
 def get_statif_list() -> Dict[str, Any]:
     """
     Return the list of committed statification
-    :return a dict containing the list of committed statification,
+    @return a dict containing the list of committed statification,
     if there is no committed statification then return an empty dict
     """
     # initialize i_limit, i_skip and s_order
@@ -287,7 +290,7 @@ def get_statif_list() -> Dict[str, Any]:
 def get_current_statif_info() -> Dict[str, Any]:
     """
     Get the current statification information, with all the data included in associated objects
-    :return a python dict containing all the information of the statification
+    @return a python dict containing all the information of the statification
     """
     # get the statification information for the new created statification (the one with commit = '')
     return service_get_statif_info('')
@@ -299,13 +302,13 @@ def get_current_statif_info() -> Dict[str, Any]:
 def get_selected_statif_info() -> Dict[str, Any]:
     """
     Get the chosen statification information, with all the data included in associated objects
-    :return a python dict containing all the information of the statification
+    @return a python dict containing all the information of the statification
     """
     # get the request parameter
-    s_commit = request.values.get('commit')
+    s_archive_sha = request.values.get('commit')
 
     # get the statification corresponding to the commit
-    return service_get_statif_info(s_commit)
+    return service_get_statif_info(s_archive_sha)
 
 
 @bp.route('/api/statification/start', methods=["POST", "GET"])
@@ -357,14 +360,14 @@ def do_start_statif() -> Dict[str, Any]:
         return service_do_start_statif(s_user, s_designation, s_description)
 
     except RuntimeError as e:
+        # in case of error unlock the route
+        # if there is no error the route will be unlocked when the background task has been finished
+        unlock_access(current_app.config['LOCKFILE'])
         # return an ajax error code
         return {
             'success': False,
             'error': str(e)
         }
-    finally:
-        # unlock the route before return
-        unlock_access(current_app.config['LOCKFILE'])
 
 
 @bp.route('/api/statification/stop', methods=["POST", "GET"])
@@ -372,7 +375,7 @@ def do_start_statif() -> Dict[str, Any]:
 def do_stop_statif() -> Dict[str, bool]:
     """
     Stop the statification process if one was running
-    :return Alway return a python dict :
+    @return Alway return a python dict :
     {
         'success': True,
     }
@@ -408,7 +411,7 @@ def do_visualize() -> Dict[str, Any]:
         'success': True,
     }
 
-    :return a python dict as described above
+    @return a python dict as described above
     """
     try:
         # test if the lock file is unlocked
@@ -420,23 +423,23 @@ def do_visualize() -> Dict[str, Any]:
         lock_access()
 
         # get the request parameter
-        s_commit = request.values.get('commit')
+        s_archive_sha = request.values.get('commit')
 
         # get the user forwarded by kerberos
         s_user = request.headers.get('X-Forwarded-User')
 
         current_app.logger.info('> Doing visualization operations')
 
-        return do_visualize(s_commit, s_user)
+        return do_visualize(s_archive_sha, s_user)
     except RuntimeError as e:
+        # in case of error unlock the route
+        # if there is no error the route will be unlocked when the background task has been finished
+        unlock_access(current_app.config['LOCKFILE'])
         # return an ajax error code
         return {
             'success': False,
             'error': str(e)
         }
-    finally:
-        # unlock the route before return
-        unlock_access(current_app.config['LOCKFILE'])
 
 
 @bp.route('/api/statification/pushtoprod', methods=["POST", "GET"])
@@ -461,7 +464,7 @@ def do_apply_prod() -> Dict[str, Any]:
         'success': True,
     }
 
-    :return a python dict as described above
+    @return a python dict as described above
     """
     try:
         # test if the lock file is unlocked
@@ -473,23 +476,23 @@ def do_apply_prod() -> Dict[str, Any]:
         lock_access()
 
         # get the request parameters
-        s_commit = request.values.get('commit')
+        s_archive_sha = request.values.get('commit')
         # get the user forwarded by kerberos
         s_user = request.headers.get('X-Forwarded-User')
 
         current_app.logger.info('> Starting push to prod operations')
 
         # push the statification to the production server
-        return service_do_apply_prod(s_user, s_commit)
+        return service_do_apply_prod(s_user, s_archive_sha)
     except RuntimeError as e:
+        # in case of error unlock the route
+        # if there is no error the route will be unlocked when the background task has been finished
+        unlock_access(current_app.config['LOCKFILE'])
         # return an ajax error code
         return {
             'success': False,
             'error': str(e)
         }
-    finally:
-        # unlock the route before return
-        unlock_access(current_app.config['LOCKFILE'])
 
 
 @bp.route('/api/statification/commit', methods=["POST", "GET"])
@@ -518,7 +521,7 @@ def do_commit() -> Dict[str, Any]:
     When the success python dict will be returned the process of commit will still be running, information about it's
     state will be given by the status background file
 
-    :return a python dict as specified above
+    @return a python dict as specified above
     """
     try:
         # test if the lock file is unlocked
@@ -542,14 +545,15 @@ def do_commit() -> Dict[str, Any]:
         current_app.logger.info('> Starting commit operations')
 
         # commit and push the statification to the git repository
-        return service_do_commit(s_user)
+        return service_do_save(s_user)
 
     except RuntimeError as e:
+        # in case of error unlock the route
+        # if there is no error the route will be unlocked when the background task has been finished
+        unlock_access(current_app.config['LOCKFILE'])
         # return an ajax error code
         return {
             'success': False,
             'error': str(e)
         }
-    finally:
-        # unlock the route before return
-        unlock_access(current_app.config['LOCKFILE'])
+

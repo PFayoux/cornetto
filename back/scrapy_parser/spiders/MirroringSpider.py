@@ -35,15 +35,15 @@ class MirroringSpider(Spider):
                  crawler_count_file=None, *args, **kwargs):
         """
         Constructor of the spider, here we set different parameters into the attributes of the spiders
-        :param crawler the crawler to bound to the spider
-        :param output: the path to the directory where to store downloaded content
-        :param urls: the urls to crawl, separated by comma
-        :param domains: the allowed domains , separated by comma
-        :param url_regex: the regex to be match for url replacement
-        :param url_replacement: the url that will replace the matched urlRegex
-        :param crawler_count_file: the path to the file that  will be use to store the count of crawled urls
-        :param args: list of other args
-        :param kwargs: dictionary of other args
+        @param crawler the crawler to bound to the spider
+        @param output: the path to the directory where to store downloaded content
+        @param urls: the urls to crawl, separated by comma
+        @param domains: the allowed domains , separated by comma
+        @param url_regex: the regex to be match for url replacement
+        @param url_replacement: the url that will replace the matched urlRegex
+        @param crawler_count_file: the path to the file that  will be use to store the count of crawled urls
+        @param args: list of other args
+        @param kwargs: dictionary of other args
         """
 
         super(Spider, self).__init__(*args, **kwargs)
@@ -66,21 +66,21 @@ class MirroringSpider(Spider):
         """
 
         This is the class method used by Scrapy to create the spider, it's called before __init__
-        :param crawler the crawler to bound to the spider
-        :param output: the path to the directory where to store downloaded content
-        :param urls: the urls to crawl, separated by comma
-        :param domains: the allowed domains , separated by comma
-        :param args: list of other args
-        :param kwargs: dictionary of other args
+        @param crawler the crawler to bound to the spider
+        @param output: the path to the directory where to store downloaded content
+        @param urls: the urls to crawl, separated by comma
+        @param domains: the allowed domains , separated by comma
+        @param args: list of other args
+        @param kwargs: dictionary of other args
         """
         return cls(crawler, output, urls, domains, *args, **kwargs)
 
     def get_local_filename(self, url, default_index="index.html"):
         """
         This method is used to get the path to the local file
-        :param url: the url of the file that has been downloaded
-        :param default_index: the default index of the url to the file
-        :return: the path to the local file
+        @param url: the url of the file that has been downloaded
+        @param default_index: the default index of the url to the file
+        @return the path to the local file
         """
 
         # get the path to the file from the url

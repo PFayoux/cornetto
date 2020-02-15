@@ -44,10 +44,10 @@ class StatificationHistoric(Base, StatificationLinkedObject):
 
         The role of this object is to trace actions that users will do on a Statification.
         The action that are registered correspond to the one listed in the enumeration Actions above.
-        :param date: Date of the realisation of the action
-        :param s_user: The name of the user that did the action
-        :param e_action: The action that the user did
-        :param statification: The statification on which the user did the action
+        @param date: Date of the realisation of the action
+        @param s_user: The name of the user that did the action
+        @param e_action: The action that the user did
+        @param statification: The statification on which the user did the action
         """
         self.date = date
         self.user = s_user
@@ -59,11 +59,11 @@ class StatificationHistoric(Base, StatificationLinkedObject):
                              e_action: Actions) -> None:
         """
         Create and add a new historic to the statification filled with the given parameters
-        :param session: the database session used to commit the change
-        :param date: Date of the realisation of the action
-        :param s_user: The name of the user that did the action
-        :param e_action: The action that the user did
-        :param statification: The statification on which the user did the action
+        @param session: the database session used to commit the change
+        @param date: Date of the realisation of the action
+        @param s_user: The name of the user that did the action
+        @param e_action: The action that the user did
+        @param statification: The statification on which the user did the action
         """
         if session and statification and date and s_user and e_action:
             session.add(StatificationHistoric(statification, date, s_user, e_action))
@@ -75,7 +75,7 @@ class StatificationHistoric(Base, StatificationLinkedObject):
         """
         Create a python dict from the source object
         :implement
-        :return: A python dict
+        @return A python dict
         """
         return {'id': self.id, 'date': self.date.strftime("%Y-%m-%d %H:%M"),
                 'user': self.user, 'action': self.action.value}
@@ -85,9 +85,9 @@ class StatificationHistoric(Base, StatificationLinkedObject):
         """
         Get the object linked to the statification id passed in parameter
         :implement
-        :param session: The database session
-        :param i_statification_id: the id of the statification
-        :return: the corresponding object(s) linked to the statification id
+        @param session: The database session
+        @param i_statification_id: the id of the statification
+        @return the corresponding object(s) linked to the statification id
         """
         try:
             results = session.query(StatificationHistoric).filter(

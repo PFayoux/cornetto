@@ -78,8 +78,8 @@ def init_logger(app: Flask):
 def create_app(config_file_path: str = None, config_dict: Dict[str, Any] = None):
     """
     This method will create a new flask application with the wanted config.
-    :param config_file_path python file that contain parameter(s)
-    :param config_dict a python dict that contain parameter(s)
+    @param config_file_path python file that contain parameter(s)
+    @param config_dict a python dict that contain parameter(s)
     """
     app = Flask(__name__, static_url_path='')  # create the application instance
 

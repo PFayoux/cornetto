@@ -40,9 +40,9 @@ class ScannedFile(Base, StatificationLinkedObject):
         The constructor of the object ScannedFile.
         Create a ScannedFile by setting the attribute with the given parameters
 
-        :param statification: The statification that contains those files
-        :param s_type_file: type MIME of the file
-        :param i_nb: the number of file for the given type
+        @param statification: The statification that contains those files
+        @param s_type_file: type MIME of the file
+        @param i_nb: the number of file for the given type
         """
         self.type_file = s_type_file
         self.nb = i_nb
@@ -52,10 +52,10 @@ class ScannedFile(Base, StatificationLinkedObject):
     def add_to_statification(session: Session, statification, s_type_file: str, i_nb: int) -> None:
         """
         Create and add a new scanned file to the statification filled with the given parameters
-        :param session: The database session
-        :param statification: The statification that contains those files
-        :param s_type_file: type MIME of the file
-        :param i_nb: the number of file for the given type
+        @param session: The database session
+        @param statification: The statification that contains those files
+        @param s_type_file: type MIME of the file
+        @param i_nb: the number of file for the given type
         """
         if session and statification and s_type_file and i_nb:
             session.add(ScannedFile(statification, s_type_file, i_nb))
@@ -67,7 +67,7 @@ class ScannedFile(Base, StatificationLinkedObject):
         """
         Create a python dict from the source object
         :implement
-        :return: A python dict
+        @return A python dict
         """
         return {'id': self.id, 'type_file': self.type_file, 'nb': self.nb}
 
@@ -76,9 +76,9 @@ class ScannedFile(Base, StatificationLinkedObject):
         """
         Get the object linked to the statification id passed in parameter
         :implement
-        :param session: The database session
-        :param i_statification_id: the id of the statification
-        :return: the corresponding object(s) linked to the statification id
+        @param session: The database session
+        @param i_statification_id: the id of the statification
+        @return the corresponding object(s) linked to the statification id
         """
         try:
             results = session.query(ScannedFile).filter(ScannedFile.statification_id == i_statification_id)

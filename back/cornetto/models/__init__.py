@@ -34,8 +34,8 @@ def open_session_db(database_uri: str) -> Session:
     """
     This method will create a new Session to access the database
     It used when subprocess need to access the database but the Flask session isn't available.
-    :param database_uri: the uri of the database
-    :return: a new session
+    @param database_uri: the uri of the database
+    @return a new session
     """
     # create engine for asynchronous connection to the database
     engine = create_engine(database_uri)

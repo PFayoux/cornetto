@@ -30,7 +30,7 @@ class CornettoObject(object):
     def get_dict(self) -> Dict[str, Any]:
         """
         Create a python dict from the source object
-        :return: A python dict
+        @return A python dict
         """
         raise NotImplementedError()
 

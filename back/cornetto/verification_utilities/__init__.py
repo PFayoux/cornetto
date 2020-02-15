@@ -20,24 +20,25 @@ import re
 from typing import List
 
 
-def valid_commit(s_commit: str, a_list_commit: List[str]) -> None:
+def valid_sha(s_archive_sha: str, a_list_sha: List[str]) -> None:
     """
-    Verify that the parameter is a valid git commit ID
-    :param a_list_commit: the list of precedent commits returned by git
-    :param s_commit: a string that should contain the id of a git commit
-    :raise SyntaxError if the commit ID don't respect the policies
+    Verify that the parameter is a valid git sha ID
+    @param a_list_sha: the list of precedent shas returned by git
+    @param s_archive_sha: a string that should contain the id of a git sha
+    :raise SyntaxError if the sha ID don't respect the policies
     """
-    # verify if s_commit is not null, is 40 characters long and is only composed of alphanumerical character
-    if not (a_list_commit and s_commit and len(s_commit) == 40 and re.match(r'[a-zA-Z0-9]{40}', s_commit) and (
-            s_commit in a_list_commit)):
-        raise SyntaxError("The parameter does not respect the commit ID policies, value : " + s_commit)
+    # verify if s_archive_sha is not null, is 40 characters long and is only composed of alphanumerical character
+    # and that it exist in the given list of Sha
+    if not (a_list_sha and s_archive_sha and len(s_archive_sha) == 40 and re.match(r'[a-zA-Z0-9]{40}', s_archive_sha) and (
+            s_archive_sha in a_list_sha)):
+        raise SyntaxError("The parameter does not respect the sha ID policies, value : " + s_archive_sha)
 
 
 def valid_user(s_user: str) -> None:
     """
     Verify that the parameter is a valid username
-    :param s_user: a string that should contain a username
-    :return: True if the string respect the policies of a username, False otherwise
+    @param s_user: a string that should contain a username
+    @return True if the string respect the policies of a username, False otherwise
     """
     # verify if s_user is not null and is only composed of alphanumerical character and eventually '-'
     if not (s_user and re.match(r'[a-zA-z0-9\-]', s_user)):

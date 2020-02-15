@@ -40,8 +40,8 @@ class ScrapyError(Base, StatificationLinkedObject):
         Create a ScrapyError by setting the attribute with the given parameters
 
         The role of this object is to store the information about an internal error to scrapy.
-        :param s_error_code: The error code correspond to the error message returned by scrapy.
-        :param statification: The statification object from which the error is linked
+        @param s_error_code: The error code correspond to the error message returned by scrapy.
+        @param statification: The statification object from which the error is linked
         """
         self.error_code = s_error_code
         self.statification = statification
@@ -50,9 +50,9 @@ class ScrapyError(Base, StatificationLinkedObject):
     def add_to_statification(session: Session, statification, s_scrapy_error: str) -> None:
         """
         Create and add a new scrapy error type to the statification filled with the given parameters
-        :param statification: The statification object from which the error is linked
-        :param session: The database session used to commit the change
-        :param s_scrapy_error: The error code correspond to the error message returned by scrapy.
+        @param statification: The statification object from which the error is linked
+        @param session: The database session used to commit the change
+        @param s_scrapy_error: The error code correspond to the error message returned by scrapy.
         """
         if session and statification and s_scrapy_error:
             session.add(ScrapyError(statification, s_scrapy_error))
@@ -64,7 +64,7 @@ class ScrapyError(Base, StatificationLinkedObject):
         """
         Create a python dict from the source object
         :implement
-        :return: A python dict
+        @return A python dict
         """
         return {'id': self.id, 'error_code': self.error_code}
 
@@ -73,9 +73,9 @@ class ScrapyError(Base, StatificationLinkedObject):
         """
         Get the object linked to the statification id passed in parameter
         :implement
-        :param session: The database session used to commit the change
-        :param i_statification_id: the id of the statification
-        :return: the corresponding object(s) linked to the statification id
+        @param session: The database session used to commit the change
+        @param i_statification_id: the id of the statification
+        @return the corresponding object(s) linked to the statification id
         """
         try:
             results = session.query(ScrapyError).filter(ScrapyError.statification_id == i_statification_id)

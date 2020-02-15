@@ -38,9 +38,9 @@ class ErrorTypeMIME(Base, StatificationLinkedObject):
     def __init__(self, statification, s_type_mime: str, s_url: str) -> None:
         """
 
-        :param s_type_mime: the MIME type that causes the error
-        :param s_url: the url that causes the error
-        :param statification: the statification thas possess the ErrorTypeMIME
+        @param s_type_mime: the MIME type that causes the error
+        @param s_url: the url that causes the error
+        @param statification: the statification thas possess the ErrorTypeMIME
         """
         self.type_mime = s_type_mime
         self.url = s_url
@@ -50,10 +50,10 @@ class ErrorTypeMIME(Base, StatificationLinkedObject):
     def add_to_statification(session: Session, statification, s_type_mime: str, s_url: str) -> None:
         """
         Create and add a new error for MIME type to the statification filled with the given parameters
-        :param session: the database session
-        :param statification: the statification
-        :param s_type_mime: the MIME type that causes the error
-        :param s_url: the url that causes the error
+        @param session: the database session
+        @param statification: the statification
+        @param s_type_mime: the MIME type that causes the error
+        @param s_url: the url that causes the error
         """
         if session and statification and s_type_mime and s_url:
             session.add(ErrorTypeMIME(statification, s_type_mime, s_url))
@@ -65,7 +65,7 @@ class ErrorTypeMIME(Base, StatificationLinkedObject):
         """
         Create a python dict from the source object
         :implement
-        :return: A python dict
+        @return A python dict
         :: Dict[str, Any]
         """
         return {'id': self.id, 'type_mime': self.type_mime, 'url': self.url}
@@ -75,9 +75,9 @@ class ErrorTypeMIME(Base, StatificationLinkedObject):
         """
         Get the object linked to the statification id passed in parameter
         :implement
-        :param session: The database session
-        :param i_statification_id: the id of the statification
-        :return: the corresponding object(s) linked to the statification id
+        @param session: The database session
+        @param i_statification_id: the id of the statification
+        @return the corresponding object(s) linked to the statification id
         """
         try:
             results = session.query(ErrorTypeMIME).filter(ErrorTypeMIME.statification_id == i_statification_id)

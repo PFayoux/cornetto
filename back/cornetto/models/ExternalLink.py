@@ -40,9 +40,9 @@ class ExternalLink(Base, StatificationLinkedObject):
         The constructor of the object ExternalLink.
         Create a ExternalLink by setting the attribute with the given parameters
 
-        :param s_source: the url of the source that contain the external url
-        :param s_url: the url that point to an external website
-        :param statification: the statification that contain that object
+        @param s_source: the url of the source that contain the external url
+        @param s_url: the url that point to an external website
+        @param statification: the statification that contain that object
         """
         self.source = s_source
         self.url = s_url
@@ -52,10 +52,10 @@ class ExternalLink(Base, StatificationLinkedObject):
     def add_to_statification(session: Session, statification, s_source: str, s_url: str) -> None:
         """
         Create and add a new external link to the statification filled with the given parameters
-        :param session: the database session
-        :param statification: the statification that contain that object
-        :param s_source: the url of the source that contain the external url
-        :param s_url: the url that point to an external website
+        @param session: the database session
+        @param statification: the statification that contain that object
+        @param s_source: the url of the source that contain the external url
+        @param s_url: the url that point to an external website
         """
         if session and statification and s_source and s_url:
             session.add(ExternalLink(statification, s_source, s_url))
@@ -67,7 +67,7 @@ class ExternalLink(Base, StatificationLinkedObject):
         """
         Create a python dict from the source object
         :implement
-        :return: A python dict
+        @return A python dict
         """
         return {'id': self.id, 'source': self.source, 'url': self.url}
 
@@ -76,9 +76,9 @@ class ExternalLink(Base, StatificationLinkedObject):
         """
         Get the object linked to the statification id passed in parameter
         :implement
-        :param session: The database session
-        :param i_statification_id: the id of the statification
-        :return: the corresponding object(s) linked to the statification id
+        @param session: The database session
+        @param i_statification_id: the id of the statification
+        @return the corresponding object(s) linked to the statification id
 
         """
         try:
