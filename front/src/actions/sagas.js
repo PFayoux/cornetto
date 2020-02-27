@@ -64,7 +64,7 @@ export const statificationsCheckCurrentLog = () => ({
 /**
  * Call the saga SAGA_STATIFICATION_SAVE
  */
-export const statificationsCommit = () => ({
+export const statificationsSave = () => ({
   type: 'SAGA_STATIFICATION_SAVE'
 })
 
