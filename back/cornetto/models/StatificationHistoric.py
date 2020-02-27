@@ -59,7 +59,7 @@ class StatificationHistoric(Base, StatificationLinkedObject):
                              e_action: Actions) -> None:
         """
         Create and add a new historic to the statification filled with the given parameters
-        @param session: the database session used to commit the change
+        @param session: the database session used to sha the change
         @param date: Date of the realisation of the action
         @param s_user: The name of the user that did the action
         @param e_action: The action that the user did

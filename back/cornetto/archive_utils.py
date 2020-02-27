@@ -9,14 +9,14 @@ logger = logging.getLogger('cornetto')
 # =================
 
 
-def create_archive_and_rename_to_sha(s_project_directory: str, s_static_repository: str,
+def create_archive_and_rename_to_sha(s_static_repository: str,
                                      s_archive_repository: str) -> str:
     """
-
-    @param s_project_directory:
-    @param s_static_repository:
-    @param s_archive_repository:
-    @return:
+    Create a new .tar.gz archive from the given s_static_repository.
+    The archive is renamed with the sha and is moved to the s_archive_repository
+    @param s_static_repository: the path to the directory of the statification
+    @param s_archive_repository: the path to the directory that contain all the archive
+    @return: the sha of the created archive
     """
     logger.info('> Create the statification archive')
 
@@ -24,7 +24,7 @@ def create_archive_and_rename_to_sha(s_project_directory: str, s_static_reposito
             '-cf',
             s_static_repository+'.tar.gz',
             s_static_repository,
-            _cwd=s_project_directory,
+            _cwd='/tmp/',
             _tty_out=False,
             _iter='err'):
         # if there are error logs
@@ -33,7 +33,7 @@ def create_archive_and_rename_to_sha(s_project_directory: str, s_static_reposito
     logger.info('> Create the statification archive sha')
 
     s_archive_sha = None
-    for sha in shasum(s_static_repository+'.tar.gz', _cwd=s_project_directory, _tty_out=False, _iter='out'):
+    for sha in shasum(s_static_repository+'.tar.gz', _cwd='/tmp/', _tty_out=False, _iter='out'):
         s_archive_sha = sha
 
     if s_archive_sha is None:
@@ -57,10 +57,11 @@ def execute_the_push_to_prod_script(s_archive_sha, s_path_to_the_push_to_prod_sc
 
 def extract_archive_to_directory(s_archive_sha, s_path_to_archive_directory, s_path_to_destination_directory):
     """
-
-    @param s_archive_sha:
-    @param s_path_to_archive_directory:
-    @param s_path_to_destination_directory:
+    Extract an archive to the wanted directory.
+    This is used in to visualize a previous statification.
+    @param s_archive_sha: the sha of the archive
+    @param s_path_to_archive_directory: the path to archive directory
+    @param s_path_to_destination_directory: the path to the directory where to extract the archive
     """
     s_archive_path = s_path_to_archive_directory+'/'+s_archive_sha+'.tar.gz'
     for log in tar('-xf', s_archive_path, s_path_to_destination_directory, _cwd=s_path_to_archive_directory,

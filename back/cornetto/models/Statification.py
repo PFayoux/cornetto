@@ -36,7 +36,7 @@ class Statification(Base, CornettoObject):
     """
     __tablename__ = 'statifications'
     id = Column(Integer, primary_key=True, nullable=False)
-    commit = Column(String, unique=True)
+    sha = Column(String, unique=True)
     designation = Column(String, nullable=False)
     description = Column(String, nullable=True)
     cre_date = Column(DateTime, nullable=False)
@@ -53,14 +53,14 @@ class Statification(Base, CornettoObject):
         """
         The constructor of the object Statification. Create a statification
         by setting the attribute with the given parameters
-        @param s_archive_sha: the commit sha
+        @param s_archive_sha: the archive sha
         @param s_designation: the designation
         @param s_description: the description
         @param d_cre_date: the date of creation
         @param d_upd_date: the date of last update
         @param e_status: the status of the statification
         """
-        self.commit = s_archive_sha
+        self.sha = s_archive_sha
         self.designation = s_designation
         self.description = s_description
         self.cre_date = d_cre_date
@@ -73,66 +73,66 @@ class Statification(Base, CornettoObject):
         """
         Update the designation of the statification
         @param session: the database session
-        @param s_archive_sha: the commit sha of the statification we want to update
+        @param s_archive_sha: the sha of the statification we want to update
         @param s_designation: the designation to set
         """
         try:
-            statification = session.query(Statification).filter(Statification.commit == s_archive_sha).one()
+            statification = session.query(Statification).filter(Statification.sha == s_archive_sha).one()
             statification.designation = s_designation
             session.add(statification)
             session.commit()
         except NoResultFound:
-            raise NoResultFound("Statification wasn't found for the given commit : " + s_archive_sha)
+            raise NoResultFound("Statification wasn't found for the given sha : " + s_archive_sha)
 
     @staticmethod
     def upd_description(session: Session, s_archive_sha: str, s_description: str) -> None:
         """
         Update the description of the statification
         @param session: the database session
-        @param s_archive_sha: the commit sha of the statification we want to update
+        @param s_archive_sha: the sha of the statification we want to update
         @param s_description: the description to set
         """
         try:
-            statification = session.query(Statification).filter(Statification.commit == s_archive_sha).one()
+            statification = session.query(Statification).filter(Statification.sha == s_archive_sha).one()
             statification.description = s_description
             session.add(statification)
             session.commit()
         except NoResultFound:
-            raise NoResultFound("Statification wasn't found for the given commit : " + s_archive_sha)
+            raise NoResultFound("Statification wasn't found for the given sha : " + s_archive_sha)
 
     @staticmethod
     def upd_upd_date(session: Session, s_archive_sha: str, d_upd_date: datetime) -> None:
         """
         Update the updDate of the statification
         @param session: the database session
-        @param s_archive_sha: the commit sha of the statification we want to update
+        @param s_archive_sha: the sha of the statification we want to update
         @param d_upd_date: the date to set
         """
         try:
-            statification = session.query(Statification).filter(Statification.commit == s_archive_sha).one()
+            statification = session.query(Statification).filter(Statification.sha == s_archive_sha).one()
             statification.upd_date = d_upd_date
             session.add(statification)
             session.commit()
         except NoResultFound:
-            raise NoResultFound("Statification wasn't found for the given commit : " + s_archive_sha)
+            raise NoResultFound("Statification wasn't found for the given sha : " + s_archive_sha)
 
     @staticmethod
     def upd_status(session: Session, s_archive_sha: str, e_status: Status) -> None:
         """
         Update the status of the statification
         @param session: the database session
-        @param s_archive_sha: the commit sha of the statification we want to update
+        @param s_archive_sha: the sha of the statification we want to update
         @param e_status: the new status to set
         """
         # verifiy that status are from the enumeration, and that the default status wasn't given for eStatusOld
         if e_status in Status:
             try:
-                statification = session.query(Statification).filter(Statification.commit == s_archive_sha).one()
+                statification = session.query(Statification).filter(Statification.sha == s_archive_sha).one()
                 statification.status = e_status
                 session.add(statification)
                 session.commit()
             except NoResultFound:
-                raise NoResultFound("Statification wasn't found for the given commit : " + s_archive_sha)
+                raise NoResultFound("Statification wasn't found for the given sha : " + s_archive_sha)
         else:
             # if the status aren't correct raise an error
             raise ValueError("The value passed for status aren't correct.")
@@ -142,18 +142,18 @@ class Statification(Base, CornettoObject):
         """
         Update the number of item crawled of the statification
         @param session: the database session
-        @param s_archive_sha: the commit sha of the statification we want to update
+        @param s_archive_sha: the sha of the statification we want to update
         @param i_nb_item: the number of item crawled
         """
         # verifiy that i_nb_item is set
         if i_nb_item:
             try:
-                statification = session.query(Statification).filter(Statification.commit == s_archive_sha).one()
+                statification = session.query(Statification).filter(Statification.sha == s_archive_sha).one()
                 statification.nb_item = i_nb_item
                 session.add(statification)
                 session.commit()
             except NoResultFound:
-                raise NoResultFound("Statification wasn't found for the given commit : " + s_archive_sha)
+                raise NoResultFound("Statification wasn't found for the given sha : " + s_archive_sha)
         else:
             # if the status aren't correct raise an error
             raise ValueError("The value passed for status aren't correct.")
@@ -180,20 +180,20 @@ class Statification(Base, CornettoObject):
             raise ValueError("The value passed for status aren't correct.")
 
     @staticmethod
-    def upd_commit(session: Session, s_archive_sha_old: str, s_archive_sha_new: str) -> None:
+    def upd_sha(session: Session, s_archive_sha_old: str, s_archive_sha_new: str) -> None:
         """
-        Update the commit sha of the statification
+        Update the sha of the statification
         @param session: the database session
-        @param s_archive_sha_old: the old commit sha of the statification
-        @param s_archive_sha_new: the new commit sha to set
+        @param s_archive_sha_old: the old sha of the statification
+        @param s_archive_sha_new: the new sha to set
         """
         try:
-            statification = session.query(Statification).filter(Statification.commit == s_archive_sha_old).one()
+            statification = session.query(Statification).filter(Statification.sha == s_archive_sha_old).one()
             statification.commit = s_archive_sha_new
             session.add(statification)
             session.commit()
         except NoResultFound:
-            raise NoResultFound("Statification wasn't found for the given commit : " + s_archive_sha_old)
+            raise NoResultFound("Statification wasn't found for the given sha : " + s_archive_sha_old)
 
     def add_object_to_statification(self, c_class: Type[StatificationLinkedObject], session: Session, *args) -> None:
         """
@@ -208,30 +208,30 @@ class Statification(Base, CornettoObject):
     def static_add_object_to_statification(c_class: Type[StatificationLinkedObject],
                                            session: Session, s_archive_sha: str, *args) -> None:
         """
-        Add an object to the statification that have the corresponding commit sha
-        @param s_archive_sha: the commit sha of the statification
+        Add an object to the statification that have the corresponding sha
+        @param s_archive_sha: the sha of the statification
         @param c_class: the class of the object to create and add
         @param session: the database session
         @param args: the parameters to set the new object
         """
-        # get the statification for the given commit
+        # get the statification for the given sha
         statification = Statification.get_statification(session, s_archive_sha)
         statification.add_object_to_statification(c_class, session, *args)
 
     @staticmethod
     def get_statification(session: Session, s_archive_sha: str) -> 'Statification':
         """
-        Get the statification that have the corresponding commit sha
+        Get the statification that have the corresponding sha
         @param session: the database session
-        @param s_archive_sha: the commit sha of the statification to be get
-        @return the statification that have the commit sha
-        :raise ValueError
+        @param s_archive_sha: the sha of the statification to be get
+        @return the statification that have the sha
+        @raise ValueError
         """
-        # get the statification corresponding to the given commit
+        # get the statification corresponding to the given sha
         try:
-            return session.query(Statification).filter(Statification.commit == s_archive_sha).one()
+            return session.query(Statification).filter(Statification.sha == s_archive_sha).one()
         except NoResultFound:
-            raise NoResultFound("Statification wasn't found for the given commit : " + s_archive_sha)
+            raise NoResultFound("Statification wasn't found for the given sha : " + s_archive_sha)
 
     @staticmethod
     def get_from_statification_id(session: Session, i_statification_id: int) -> 'Statification':
@@ -241,7 +241,7 @@ class Statification(Base, CornettoObject):
         @param session: the database session
         @param i_statification_id: the id of the statification to get
         @return the corresponding statification object
-        :raise NoResultFound if no result has been found for the given id
+        @raise NoResultFound if no result has been found for the given id
         """
         try:
             return session.query(Statification).filter(Statification.id == i_statification_id).one()
@@ -311,7 +311,7 @@ class Statification(Base, CornettoObject):
         Create a python dict from the source object
         @return A python dict
         """
-        return {'id': self.id, 'commit': self.commit, 'designation': self.designation,
+        return {'id': self.id, 'sha': self.sha, 'designation': self.designation,
                 'description': self.description, 'cre_date': self.cre_date.strftime("%Y-%m-%d %H:%M"),
                 'upd_date': self.upd_date.strftime(
                     "%Y-%m-%d %H:%M"), 'status': self.status.value, 'nb_item': self.nb_item}

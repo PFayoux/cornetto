@@ -51,7 +51,7 @@ class ScrapyError(Base, StatificationLinkedObject):
         """
         Create and add a new scrapy error type to the statification filled with the given parameters
         @param statification: The statification object from which the error is linked
-        @param session: The database session used to commit the change
+        @param session: The database session used to sha the change
         @param s_scrapy_error: The error code correspond to the error message returned by scrapy.
         """
         if session and statification and s_scrapy_error:
@@ -73,7 +73,7 @@ class ScrapyError(Base, StatificationLinkedObject):
         """
         Get the object linked to the statification id passed in parameter
         :implement
-        @param session: The database session used to commit the change
+        @param session: The database session used to sha the change
         @param i_statification_id: the id of the statification
         @return the corresponding object(s) linked to the statification id
         """

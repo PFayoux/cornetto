@@ -66,7 +66,7 @@ class Actions(enum.Enum):
     It is use to register all operations done to a statification, and keep an historic of what have been done.
     """
     CREATE_STATIFICATION = "Création d'une nouvelle statification"
-    COMMIT_STATIFICATION = "Validation de la statification"
+    SAVE_STATIFICATION = "Validation de la statification"
     VISUALIZE_STATIFICATION = "Visualisation de la statification"
     PUSHTOPROD_STATIFICATION = "Mise en production de la statification"
     UPDATE_STATIFICATION = "Mise à jour de la statification"

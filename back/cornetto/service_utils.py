@@ -19,12 +19,14 @@ logger = logging.getLogger('cornetto')
 
 def validate_sha(s_sha: str, s_archive_directory: str):
     """
-    Verify that the given commit sha exist in the git repository
+    Verify that an archive possess the given sha
     @param s_archive_directory: the archive directory
     @param s_sha: the sha of the static version
-    :raise SyntaxError if the commit doesn't exist
+    @raise SyntaxError if the sha doesn't exist
     """
     try:
+        if not os.path.isdir(s_archive_directory):
+            raise NotADirectoryError("The given archive directory path does'nt exist : " + s_archive_directory)
         a_list_sha = []
         # browse all file in the archive directory
         for filename in os.listdir(s_archive_directory):
@@ -32,7 +34,7 @@ def validate_sha(s_sha: str, s_archive_directory: str):
                 # remove the .tar.gz extension in the filename and add it to the list
                 a_list_sha.append(filename.strip('.tar.gz'))
 
-        # verify that the commit id is valid
+        # verify that the sha id is valid
         valid_sha(s_sha, a_list_sha)
     except SyntaxError as e:
         # if the parameter that should contain a sha wasn't valid, show an error in the log
@@ -79,7 +81,7 @@ def is_access_locked() -> bool:
 def lock_access():
     """
     Put a lock on the lockfile. The lockfile is used to block access to a route when doing some critical treatment.
-    :raise IOError
+    @raise IOError
     """
     try:
         # open the file if it exist
@@ -175,10 +177,10 @@ def get_background_status_file_content() -> Dict[str, Any]:
 def service_do_clean_directory(s_repository: str):
     """
     Clean the statification directory
-    @param s_repository - the path to the repository to initialize
+    @param s_repository - the path to the repository to clean
     """
     logger.info('> Static repository initialization ...')
-    logger.debug('repertoire init : ' + s_repository)
+    logger.debug('repository clean : ' + s_repository)
 
     # Select the static directory
     empty_static_directory = rm.bake('-rf', './*', _cwd=s_repository, _tty_out=False, _iter='out')

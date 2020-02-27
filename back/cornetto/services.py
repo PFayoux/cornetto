@@ -72,7 +72,7 @@ def service_get_last_statif_infos() -> Dict[str, Any]:
     """
     # initialize the number of item to crawl to 0
     i_nb_item_to_crawl = 0
-    # initialize commit to empty value
+    # initialize sha to empty value
     sha = ''
     # set designation and description as empty
     designation = ''
@@ -93,7 +93,7 @@ def service_get_last_statif_infos() -> Dict[str, Any]:
             # get the number of item crawled in the previous statification (preceding the new one created)
             i_nb_item_to_crawl = last_statification[1]['nb_item']
 
-        # get the status and the commit sha of the last statification
+        # get the status and the sha of the last statification
         status = last_statification[0]['status']
         sha = last_statification[0]['sha']
 
@@ -151,7 +151,7 @@ def service_get_satif_list(i_limit: int, i_skip: int, s_order: str) -> Dict[str,
 
 def service_get_statif_info(s_archive_sha: str) -> Dict[str, Any]:
     """
-    Get the statification information for the given commit sha, with all the data included in associated objects.
+    Get the statification information for the given sha, with all the data included in associated objects.
     For the current statification, it will return a python dict containing :
       -  statification : the data of object statification
       -  errors_type_mime : the list of errors type mime
@@ -173,12 +173,12 @@ def service_get_statif_info(s_archive_sha: str) -> Dict[str, Any]:
     a_statification_historic = None
 
     try:
-        # verify that the commit is valid if not , if it is empty then
+        # verify that the sha is valid if not , if it is empty then
         if s_archive_sha != '':
-            validate_sha(s_archive_sha)
+            validate_sha(s_archive_sha, current_app.config['ARCHIVE_REPOSITORY'])
 
         try:
-            # get the statification corresponding to the commit and the associated objects
+            # get the statification corresponding to the sha and the associated objects
             statification = Statification.get_statification(current_app.session, s_archive_sha)
             # get the JSON from this statification
             s_statification = statification.get_dict()
@@ -223,7 +223,7 @@ def service_get_statif_info(s_archive_sha: str) -> Dict[str, Any]:
         }
     except SyntaxError as e:
         current_app.logger.error(e)
-        # return an error code if the commit is not valid
+        # return an error code if the sha is not valid
         return {
             'success': False,
             'error': 'commit_unvalid'
@@ -252,7 +252,7 @@ def service_do_start_statif(s_user: str, s_designation: str, s_description: str)
                 {
                     'success': True,
                 }
-    :raise RuntimeError
+    @raise RuntimeError
     """
 
     clear_status_background()
@@ -315,7 +315,7 @@ def service_do_save(s_user: str) -> Dict[str, Any]:
                     'success': True,
                 }
 
-    :raise RuntimeError if an error happen during the process it will be caught and transferred as a RuntimeError to the
+    @raise RuntimeError if an error happen during the process it will be caught and transferred as a RuntimeError to the
                         parent method with a specific error code.
     """
     clear_status_background()
@@ -367,13 +367,13 @@ def service_do_save(s_user: str) -> Dict[str, Any]:
 
 def service_do_apply_prod(s_user: str, s_archive_sha: str) -> Dict[str, Any]:
     """
-    Push the desired statification (commit) in production.
+    Push the desired statification (sha) in production.
 
     This method will call a background process to treat asynchronously the push operation which can take a long time,
     it will return before the background process is finished.
 
     @param s_user is needed and should correspond to a username
-    @param s_archive_sha is needed and should correspond to a valid commit
+    @param s_archive_sha is needed and should correspond to a valid sha
     @return  if everything goes smoothly the following python dict will be returned :
                 {
                     'success': True,
@@ -381,17 +381,17 @@ def service_do_apply_prod(s_user: str, s_archive_sha: str) -> Dict[str, Any]:
     @raise RuntimeError if an error happen during the process it will be caught and transferred as a RuntimeError to the
                         parent method with a specific error code.
     """
-    # this try except is there to check if commit or user are valid
+    # this try except is there to check if sha or user are valid
     try:
         if not s_user:
             current_app.logger.error("Parameter X-Forwarded-User empty")
             raise RuntimeError('forwarded_user_empty')
 
-        validate_sha(s_archive_sha)
+        validate_sha(s_archive_sha, current_app.config['ARCHIVE_REPOSITORY'])
 
         clear_status_background()
 
-        # reinitialise the STATIC repository before checking out the last commit
+        # reinitialise the STATIC repository before checking out the last sha
         # ensure sources are up to date
         service_do_clean_directory(current_app.config['STATIC_REPOSITORY'])
 
@@ -428,18 +428,18 @@ def service_do_apply_prod(s_user: str, s_archive_sha: str) -> Dict[str, Any]:
 
 def service_do_visualize(s_user: str, s_archive_sha: str) -> Dict[str, Any]:
     """
-    Checkout a specified commit into the 'Visualize' repository to visualize a precedent statification.
+    Checkout a specified sha into the 'Visualize' repository to visualize a precedent statification.
 
     This method will call a background process to treat asynchronously the push operation which can take a long time,
     it will return before the background process is finished.
 
     @param s_user is needed and should correspond to a username
-    @param s_archive_sha is needed and should correspond to a valid commit
+    @param s_archive_sha is needed and should correspond to a valid sha
     @return  if everything goes smoothly the following python dict will be returned :
                 {
                     'success': True,
                 }
-    :raise RuntimeError if an error happen during the process it will be caught and transferred as a RuntimeError to the
+    @raise RuntimeError if an error happen during the process it will be caught and transferred as a RuntimeError to the
                         parent method with a specific error code.
     """
     try:
@@ -447,7 +447,7 @@ def service_do_visualize(s_user: str, s_archive_sha: str) -> Dict[str, Any]:
             current_app.logger.error("Parameter X-Forwarded-User empty")
             raise RuntimeError('forwarded_user_empty')
 
-        validate_sha(s_archive_sha)
+        validate_sha(s_archive_sha, current_app.config['ARCHIVE_REPOSITORY'])
 
         clear_status_background()
 

@@ -106,7 +106,7 @@ class StatificationProcess:
         # if success is True and there is an object Statification linked to the process
         if not success:
             try:
-                # get the statification with empty commit
+                # get the statification with empty sha
                 statification = Statification.get_statification(session, '')
                 # Delete the current Statification Object with all the linked object
                 statification.delete(session)
@@ -193,13 +193,13 @@ class StatificationProcess:
         @param s_designation:  the designation of the new statification
         @param s_description: the description of the new statification
         @param s_user: the name of the user which started the operation
-        :raise ValueError if one parameter is missing
+        @raise ValueError if one parameter is missing
         """
 
         if self.s_repository_path and os.path.isdir(self.s_repository_path) and self.s_urls and self.s_domains:
 
             try:
-                # get the statification with empty commit
+                # get the statification with empty sha
                 statification = Statification.get_statification(session, '')
                 # Delete the current Statification Object with all the linked object
                 statification.delete(session)
@@ -210,7 +210,7 @@ class StatificationProcess:
 
             self.logger.info("Create Statification")
 
-            # create a new statification with empty commit ID
+            # create a new statification with empty sha ID
             statification = Statification('', s_designation, s_description, datetime.utcnow(), datetime.utcnow(),
                                           Status.CREATED)
             session.add(statification)
@@ -302,7 +302,7 @@ class StatificationProcess:
         This methode create database object associated to the statification with the result of the log
         that scrapy has generated.
         @param session
-        :raise NoResultFound if there is no statification with empty commit sha
+        @raise NoResultFound if there is no statification with empty sha
         """
 
         # finalization of the statification by removing unwanted files and directories and empty directories
@@ -310,7 +310,7 @@ class StatificationProcess:
         self.delete_directories()
         self.delete_empty_directories()
 
-        # get the statification with empty commit
+        # get the statification with empty sha
         statification = Statification.get_statification(session, '')
 
         # open the log file that contain scrapy errors
@@ -418,7 +418,7 @@ class StatificationProcess:
 
                 try:
                     # set the number of crawled item into the statification object
-                    statification.upd_nb_item(session, statification.commit, int(s_value_item_scraped_count))
+                    statification.upd_nb_item(session, statification.sha, int(s_value_item_scraped_count))
                 except ValueError as e:
                     self.logger.info(e)
         try:

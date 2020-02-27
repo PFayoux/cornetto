@@ -37,13 +37,13 @@ bp = Blueprint("cornetto", __name__)
 
 def commit_required(f):
     """
-    Check if a commit sha is passed as HTTP POST parameter.
+    Check if a sha is passed as HTTP POST parameter.
     It is used to decorate route that need this parameter.
-    If the commit sha is present in the HTTP POST parameter, it will call the route,
+    If the sha is present in the HTTP POST parameter, it will call the route,
     otherwise it will return a python dict containing an error.
 
     **Example**:
-        If 'commit' is not present in the parameter then it will return :
+        If 'sha' is not present in the parameter then it will return :
         {
             success: False,
             error: 'commit_unvalid'
@@ -51,9 +51,9 @@ def commit_required(f):
     """
     @functools.wraps(f)
     def commit_required_wrapped(*args, **kwargs):
-        s_archive_sha = request.values.get('commit')
+        s_archive_sha = request.values.get('sha')
         if s_archive_sha is None:
-            current_app.logger.error("The commit parameter is empty")
+            current_app.logger.error("The sha parameter is empty")
             # return an error code
             return {
                 'success': False,
@@ -166,7 +166,7 @@ def statification_status() -> Dict[str, Any]:
     """
     Check the status of the api. The following information will be returned in a python dict :
     - isRunning         :   a boolean that indicate if a statification Process is running
-    - commit            :   a string that contain the sha of the last statification,
+    - sha            :   a string that contain the sha of the last statification,
                           if the last is a new and unsaved statification it will be empty
     - designation       :   the designation of the last statification, or empty
     - description       :   the description of the last statification, or empty
@@ -189,7 +189,7 @@ def statification_status() -> Dict[str, Any]:
 
                     {
                         'isRunning': false,
-                        'commit': '',
+                        'sha': '',
                         'designation': '',
                         'description': '',
                         'currentNbItemCrawled': 0,
@@ -212,7 +212,7 @@ def statification_status() -> Dict[str, Any]:
     # get the last statification informations
     last_statif_infos = service_get_last_statif_infos()
 
-    commit = last_statif_infos['commit']
+    commit = last_statif_infos['sha']
     designation = last_statif_infos['designation']
     description = last_statif_infos['description']
     status = last_statif_infos['status']
@@ -228,7 +228,7 @@ def statification_status() -> Dict[str, Any]:
 
     return {
         'isRunning': b_is_running,
-        'commit': commit,
+        'sha': commit,
         'designation': designation,
         'description': description,
         'currentNbItemCrawled': i_current_nb_item_crawled,
@@ -292,7 +292,7 @@ def get_current_statif_info() -> Dict[str, Any]:
     Get the current statification information, with all the data included in associated objects
     @return a python dict containing all the information of the statification
     """
-    # get the statification information for the new created statification (the one with commit = '')
+    # get the statification information for the new created statification (the one with sha = '')
     return service_get_statif_info('')
 
 
@@ -305,9 +305,9 @@ def get_selected_statif_info() -> Dict[str, Any]:
     @return a python dict containing all the information of the statification
     """
     # get the request parameter
-    s_archive_sha = request.values.get('commit')
+    s_archive_sha = request.values.get('sha')
 
-    # get the statification corresponding to the commit
+    # get the statification corresponding to the sha
     return service_get_statif_info(s_archive_sha)
 
 
@@ -395,7 +395,7 @@ def do_stop_statif() -> Dict[str, bool]:
 @user_required
 def do_visualize() -> Dict[str, Any]:
     """
-    Checkout a specified commit into the 'Visualize' repository to visualize a precedent statification
+    Checkout a specified sha into the 'Visualize' repository to visualize a precedent statification
 
     If an error happen during the process the error will be caught and a python dict will be returned with a specific
     error code like the following example :
@@ -423,7 +423,7 @@ def do_visualize() -> Dict[str, Any]:
         lock_access()
 
         # get the request parameter
-        s_archive_sha = request.values.get('commit')
+        s_archive_sha = request.values.get('sha')
 
         # get the user forwarded by kerberos
         s_user = request.headers.get('X-Forwarded-User')
@@ -448,7 +448,7 @@ def do_visualize() -> Dict[str, Any]:
 @user_required
 def do_apply_prod() -> Dict[str, Any]:
     """
-    Push the desired statification (commit) in production.
+    Push the desired statification (sha) in production.
 
     If an error happen during the process the error will be caught and a python dict will be returned with a specific
     error code like the following example :
@@ -476,7 +476,7 @@ def do_apply_prod() -> Dict[str, Any]:
         lock_access()
 
         # get the request parameters
-        s_archive_sha = request.values.get('commit')
+        s_archive_sha = request.values.get('sha')
         # get the user forwarded by kerberos
         s_user = request.headers.get('X-Forwarded-User')
 
@@ -495,13 +495,13 @@ def do_apply_prod() -> Dict[str, Any]:
         }
 
 
-@bp.route('/api/statification/commit', methods=["POST", "GET"])
+@bp.route('/api/statification/sha', methods=["POST", "GET"])
 @build_json()
 @user_required
 def do_commit() -> Dict[str, Any]:
     """
-    Call the service that will commit and push the statification on the git repository
-    and rename the logfile by the commit SHA.
+    Call the service that will sha and push the statification on the git repository
+    and rename the logfile by the sha.
     Need an X-Forwarded-User in the request
 
     If an error happen during the process the error will be caught and a python dict will be returned with a specific
@@ -518,7 +518,7 @@ def do_commit() -> Dict[str, Any]:
         'success': True,
     }
 
-    When the success python dict will be returned the process of commit will still be running, information about it's
+    When the success python dict will be returned the process of sha will still be running, information about it's
     state will be given by the status background file
 
     @return a python dict as specified above
@@ -532,19 +532,19 @@ def do_commit() -> Dict[str, Any]:
         # block the route for other users
         lock_access()
 
-        current_app.logger.info('> Starting commit operations')
+        current_app.logger.info('> Starting sha operations')
 
         # get the request parameter
         # get the user forwarded by kerberos
         s_user = request.headers.get('X-Forwarded-User')
 
-        # if no process is running we authorize to commit
+        # if no process is running we authorize to sha
         if current_app.statifProcess.is_running():
             raise RuntimeError('process_running')
 
-        current_app.logger.info('> Starting commit operations')
+        current_app.logger.info('> Starting sha operations')
 
-        # commit and push the statification to the git repository
+        # sha and push the statification to the git repository
         return service_do_save(s_user)
 
     except RuntimeError as e:

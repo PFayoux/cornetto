@@ -55,7 +55,7 @@ def test_statification_status(setup_module, setup_fonction):
     assert r.status_code == 200
 
     data = json.loads(r.get_data())
-    assert data['commit'] == ''
+    assert data['sha'] == ''
     assert data['description'] == ''
     assert data['designation'] == ''
     assert not data['isLocked']

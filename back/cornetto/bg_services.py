@@ -20,26 +20,25 @@ logger = logging.getLogger('cornetto')
 # ==========================
 
 
-def bg_save_to_archive(s_user: str, s_project_directory: str, s_archive_repository: str,
+def bg_save_to_archive(s_user: str, s_archive_repository: str,
                        s_static_repository: str, s_log_file: str, s_log_dir: str, s_lock_file: str,
                        s_file_status_background: str, s_database_uri: str):
     """
-
-    @param s_user:
-    @param s_project_directory:
-    @param s_archive_repository:
-    @param s_static_repository:
-    @param s_log_file:
-    @param s_log_dir:
-    @param s_lock_file:
-    @param s_file_status_background:
-    @param s_database_uri:
+    This method create a new archive with the content of the statification directory.
+    @param s_user: the name of the user doing the operation
+    @param s_archive_repository: the path to the archive directory
+    @param s_static_repository: the path to the static repository
+    @param s_log_file: the path to the log file
+    @param s_log_dir: the path to the log directory
+    @param s_lock_file: the path to the lock file
+    @param s_file_status_background: the path to the file that contain the background process status
+    @param s_database_uri: the uri of the database
     """
     try:
         # create a session for this specific code , because it's executed after the flask instance has been killed
         session = open_session_db(s_database_uri)
 
-        s_archive_sha = create_archive_and_rename_to_sha(s_project_directory, s_static_repository, s_archive_repository)
+        s_archive_sha = create_archive_and_rename_to_sha(s_static_repository, s_archive_repository)
 
         logger.info('> Rename log file with the archive sha')
 
@@ -49,7 +48,7 @@ def bg_save_to_archive(s_user: str, s_project_directory: str, s_archive_reposito
         logger.info('> Register the Sha into the database')
 
         # update the current statification with no sha with the new sha
-        Statification.upd_commit(session, '', s_archive_sha)
+        Statification.upd_sha(session, '', s_archive_sha)
 
         # Now the statification is archived so we change the status from statified to SAVED
         Statification.upd_status(session, s_archive_sha, Status.SAVED)
@@ -63,15 +62,15 @@ def bg_save_to_archive(s_user: str, s_project_directory: str, s_archive_reposito
                                                          s_archive_sha,
                                                          datetime.utcnow(),
                                                          s_user,
-                                                         Actions.COMMIT_STATIFICATION)
+                                                         Actions.SAVE_STATIFICATION)
         logger.info('> Commit operations terminated')
 
-        # on success write a success code and the commit id
+        # on success write a success code and the sha id
         write_status_background(
             {
                 'success': True,
-                'commit': s_archive_sha,
-                'operation': 'commit'
+                'sha': s_archive_sha,
+                'operation': 'sha'
             },
             s_file_status_background
         )
@@ -81,7 +80,7 @@ def bg_save_to_archive(s_user: str, s_project_directory: str, s_archive_reposito
             {
                 'success': False,
                 'error': 'subprocess',
-                'operation': 'commit'
+                'operation': 'sha'
             },
             s_file_status_background
         )
@@ -91,19 +90,19 @@ def bg_save_to_archive(s_user: str, s_project_directory: str, s_archive_reposito
             {
                 'success': False,
                 'error': 'log_file',
-                'operation': 'commit'
+                'operation': 'sha'
             },
             s_file_status_background
         )
     except (ValueError, NoResultFound) as e:
         logger.error(str(e))
-        # if no statification was found for the given commit
+        # if no statification was found for the given sha
         # write an error in the statusBackground file
         write_status_background(
             {
                 'success': False,
                 'error': 'database',
-                'operation': 'commit'
+                'operation': 'sha'
             },
             s_file_status_background
         )
@@ -116,13 +115,14 @@ def bg_extract_archive_to_prod(s_archive_sha: str, s_user: str, s_path_to_the_pu
                                s_file_status_background: str, s_lock_file: str,
                                s_database_uri: str):
     """
-
-    @param s_archive_sha:
-    @param s_user:
-    @param s_path_to_the_push_to_prod_script:
-    @param s_file_status_background:
-    @param s_lock_file:
-    @param s_database_uri:
+    This method will execute the script to push to production an archive of a statification.
+    @param s_archive_sha: the sha of the archive to push to production
+    @param s_user: the name of the user doing the operation
+    @param s_path_to_the_push_to_prod_script: the path to the script that will manage the deployment
+    of the archive to production
+    @param s_file_status_background: the path to the file that contain the background process status
+    @param s_lock_file: the path to the lock file
+    @param s_database_uri: the path to the database uri
     """
     try:
         # create a session for this specific code , because it's executed after the flask instance has been killed
@@ -162,7 +162,7 @@ def bg_extract_archive_to_prod(s_archive_sha: str, s_user: str, s_path_to_the_pu
             {
                 'success': True,
                 'operation': 'pushtoprod',
-                'commit': s_archive_sha
+                'sha': s_archive_sha
             },
             s_file_status_background
         )
@@ -196,14 +196,14 @@ def bg_open_archive_to_visualize(s_archive_sha: str, s_user: str, s_archive_repo
                                  s_visualize_repository: str,
                                  s_file_status_background: str, s_lock_file: str, s_database_uri: str):
     """
-
-    @param s_archive_sha:
-    @param s_user:
-    @param s_archive_repository:
-    @param s_visualize_repository:
-    @param s_file_status_background:
-    @param s_lock_file:
-    @param s_database_uri:
+    This method will open a previous statification archive and extract it to the visualize directory
+    @param s_archive_sha: the sha of the archive
+    @param s_user: the name of the user doing the operation
+    @param s_archive_repository: the path to the archive directory
+    @param s_visualize_repository: the path to the visualize directory
+    @param s_file_status_background: the path to the file that contain the background process status
+    @param s_lock_file: the path to the lock file
+    @param s_database_uri: the database uri
     """
     try:
         # create a session for this specific code , because it's executed after the flask instance has been killed
@@ -246,7 +246,7 @@ def bg_open_archive_to_visualize(s_archive_sha: str, s_user: str, s_archive_repo
                                                          Actions.VISUALIZE_STATIFICATION)
         # on success write a success code
         write_status_background(
-            {'success': True, 'operation': 'visualize', 'commit': s_archive_sha},
+            {'success': True, 'operation': 'visualize', 'sha': s_archive_sha},
             s_file_status_background
         )
     except (ValueError, NoResultFound) as e:

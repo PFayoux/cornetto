@@ -25,7 +25,7 @@ def valid_sha(s_archive_sha: str, a_list_sha: List[str]) -> None:
     Verify that the parameter is a valid git sha ID
     @param a_list_sha: the list of precedent shas returned by git
     @param s_archive_sha: a string that should contain the id of a git sha
-    :raise SyntaxError if the sha ID don't respect the policies
+    @raise SyntaxError if the sha ID don't respect the policies
     """
     # verify if s_archive_sha is not null, is 40 characters long and is only composed of alphanumerical character
     # and that it exist in the given list of Sha
