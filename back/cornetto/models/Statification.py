@@ -189,7 +189,7 @@ class Statification(Base, CornettoObject):
         """
         try:
             statification = session.query(Statification).filter(Statification.sha == s_archive_sha_old).one()
-            statification.commit = s_archive_sha_new
+            statification.sha = s_archive_sha_new
             session.add(statification)
             session.commit()
         except NoResultFound:

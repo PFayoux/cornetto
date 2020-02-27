@@ -74,7 +74,7 @@ const init = {
   clearInterval: false,
   url: '/create',
   activeStep: 0,
-  commitSha: '',
+  sha: '',
   activeAccordeon: '',
 
   // datas used to know the state of the statification process
@@ -100,8 +100,8 @@ const statifications = (state = Immutable.Map(init), action) => {
      */
     case 'STATIFICATION_SET_ACTIVESTEP':
       return state.set('activeStep', action.activeStep)
-    case 'STATIFICATION_SET_COMMIT_SHA':
-      return state.set('commitSha', action.commitSha)
+    case 'STATIFICATION_SET_SAVE_SHA':
+      return state.set('sha', action.sha)
     case 'STATIFICATION_SET_LOADING':
       return state.set('loading', action.loading)
     case 'STATIFICATION_SET_WAITFORSERVER':

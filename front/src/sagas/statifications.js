@@ -23,7 +23,7 @@ import {
   setFormData, setFormErrors, setFormLoading, setLoading, setWaitForServer, setListInfoLoading,
   setListErrorsTypeMime, setListScrapyErrors, setListHtmlErrors,
   setListScannedFiles, setListExternalLinks, setListStatificationHistorics,
-  setStatificationRunning, setStatificationProgress, setActiveStep, setCommitSha,
+  setStatificationRunning, setStatificationProgress, setActiveStep, setsha,
   setListErrorErrorsTypeMime, setListErrorScrapyErrors, setListErrorHtmlErrors,
   setListErrorScannedFiles, setListErrorExternalLinks, setListErrorStatificationHistorics, clearListErrorInfo, setClearInterval
 }
@@ -33,14 +33,14 @@ import { statificationsCheckCurrentLog, listStatifications, countStatifications,
 
 /**
  * Method that treat the query to the server to load the data of a statification
- * @param  {[type]} commitSha the commit sha of the statification to get
+ * @param  {[type]} sha the archive sha of the statification to get
  * @return {[type]}           json object of the statification
  */
-function loadData (commitSha) {
+function loadData (sha) {
   // create a promise to handle the answer of the server
   return new Promise((resolve, reject) => {
     // send the query
-    fetch(`/api/statification?commit=${commitSha}`, {
+    fetch(`/api/statification?sha=${sha}`, {
       method: 'POST',
       credentials: 'same-origin'
     })
@@ -59,7 +59,7 @@ function loadData (commitSha) {
 }
 
 /**
- * Get a Statification object from the API given a commit sha,
+ * Get a Statification object from the API given a archive sha,
  * then load the datas of the statification into the page that list the informations
  * @param  {[type]}    action [description]
  * @return {Generator}        [description]
@@ -71,8 +71,8 @@ function * loadDataSaga (action) {
 
     // do a race between loadData and delay, and store the result respectively in result and timeout
     const { result, timeout } = yield race({
-      // call loadData to do the request with the parameter 'commitSha' passed with the action
-      result: call(loadData, action.commitSha),
+      // call loadData to do the request with the parameter 'sha' passed with the action
+      result: call(loadData, action.sha),
 
       // define the timeout in case the server take too long to answer
       timeout: call(delay, 20000)
@@ -164,7 +164,7 @@ function * checkStatusProcessSaga (action) {
     })
     if (timeout) { throw new Error('timeout') }
 
-    // open a popup and send user to create page if status is not 3 (published) or 2 (commited) or visualized
+    // open a popup and send user to create page if status is not 3 (published) or 2 (saved) or visualized
     if (result.status !== 4 && result.status !== 3 && result.status !== 2 && window.location.pathname.search('list') >= 0) {
       // setup the dialog and show it to the user
       yield put(setDialogTitle(I18n.t('statification.dialog.redirect_process_running.title')))
@@ -188,13 +188,13 @@ function * checkStatusProcessSaga (action) {
       yield put(setWaitForServer(false))
     }
 
-    // if a background process that return a commit SHA has finished
-    if (result.statusBackground && result.statusBackground.commit) {
-      // register the commit sha of the last commited statification
-      yield put(setCommitSha(result.statusBackground.commit))
+    // if a background process that return a archive sha has finished
+    if (result.statusBackground && result.statusBackground.sha) {
+      // register the archive sha of the last saved statification
+      yield put(setsha(result.statusBackground.sha))
     } else {
-      // register the commit sha of the last statification
-      yield put(setCommitSha(result.commit))
+      // register the archive sha of the last statification
+      yield put(setsha(result.sha))
     }
 
     // if the process is running
@@ -210,36 +210,36 @@ function * checkStatusProcessSaga (action) {
       // when the statification process is finished and if current step is not 1 and not 2, check the logs of the statification
       if (result.status === 1 && action.step !== 1 && action.step !== 2) {
         yield put(statificationsCheckCurrentLog())
-      } else if (action.waitForServer === true && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'pushtoprod' && result.statusBackground.commit) {
+      } else if (action.waitForServer === true && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'pushtoprod' && result.statusBackground.sha) {
         // case pushToProd
         // refresh the list and count
         yield put(countStatifications())
         yield put(listStatifications())
         // refresh list statification
-        yield put(statificationsLoadData(result.statusBackground.commit))
+        yield put(statificationsLoadData(result.statusBackground.sha))
         // redirect user to step 0
         yield put(setActiveStep(0))
         // open in a new tab the push to prod statification
         yield window.open(I18n.t('url.site_prod'), '_blanck').focus()
-      } else if (action.waitForServer === true && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'visualize' && result.statusBackground.commit) {
+      } else if (action.waitForServer === true && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'visualize' && result.statusBackground.sha) {
         // refresh the list and count
         yield put(countStatifications())
         yield put(listStatifications())
         // refresh visualized statification
-        yield put(statificationsLoadData(result.statusBackground.commit))
+        yield put(statificationsLoadData(result.statusBackground.sha))
         // open in a new tab the visualized statification
         yield window.open(I18n.t('url.site_visualize'), '_blank').focus()
-      } else if (result.status === 2 && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'commit' && action.step === 2) {
-        // case commit finish user in step 2
-        // if status is 2, statusBackground is success and operation is commit, it means the commit operations has finished so if we are in step 2 we need to pass to step 3
+      } else if (result.status === 2 && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'save' && action.step === 2) {
+        // case save finish user in step 2
+        // if status is 2, statusBackground is success and operation is save, it means the save operations has finished so if we are in step 2 we need to pass to step 3
         yield put(setActiveStep(3))
-        // clear the list of error after an operation of commit
+        // clear the list of error after an operation of save
         yield put(clearListErrorInfo())
-      } else if ((result.status === 2 && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'commit' && action.step !== 3)) {
-        // case commit finish user not in step 2 and not in step 3
-        // if the status is 2 (commited) and not in step 3 (push to prod button), or if status is 3 (pushed to prod) then the step should be 0
+      } else if ((result.status === 2 && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'save' && action.step !== 3)) {
+        // case save finish user not in step 2 and not in step 3
+        // if the status is 2 (saved) and not in step 3 (push to prod button), or if status is 3 (pushed to prod) then the step should be 0
         yield put(setActiveStep(0))
-        // clear the list of error after an operation of commit
+        // clear the list of error after an operation of save
         yield put(clearListErrorInfo())
       }
 
@@ -375,12 +375,12 @@ function * stopProcessSaga (action) {
 }
 
 /**
- * [commit description]
+ * [save description]
  * @return {[type]} [description]
  */
-function commit () {
+function save () {
   return new Promise((resolve, reject) => {
-    fetch('/api/statification/commit', {
+    fetch('/api/statification/sha', {
       method: 'POST',
       credentials: 'same-origin'
     }).then((response) => {
@@ -398,10 +398,10 @@ function commit () {
 }
 
 /**
- * [commitSaga description]
+ * [saveSaga description]
  * @return {Generator} [description]
  */
-function * commitSaga () {
+function * saveSaga () {
   // set the loading wheel in the stepper
   yield put(setLoading(true))
   yield put(setWaitForServer(true))
@@ -411,7 +411,7 @@ function * commitSaga () {
   try {
     // send the submit request to the server
     const { result, timeout } = yield race({
-      result: call(commit),
+      result: call(save),
       timeout: call(delay, 120000)
     })
     if (timeout) { throw new Error('timeout') }
@@ -425,10 +425,10 @@ function * commitSaga () {
     }
 
     // show a message to the user to indicate action has been launched
-    yield put(pushError(getInfoMessage('start_commit'), 'info'))
+    yield put(pushError(getInfoMessage('start_save'), 'info'))
   } catch (error) {
     yield put(setLoading(false))
-    if (error === 'commit_nothing') {
+    if (error === 'save_nothing') {
       yield put(pushError(getErrorMessage(error), 'warn'))
       yield put(setActiveStep(0))
     } else if (error === 'route_access') {
@@ -444,12 +444,12 @@ function * commitSaga () {
 
 /**
  *
- * saveDataSaga is used to push the commit when the statif preview is ok
- * @param  {[type]} commitSha          the commit sha of the statification to publish to production
+ * saveDataSaga is used to save the statif when preview is ok
+ * @param  {[type]} sha          the archive sha of the statification to publish to production
  */
-function pushToProd (commitSha) {
+function pushToProd (sha) {
   return new Promise((resolve, reject) => {
-    fetch(`/api/statification/pushtoprod?commit=${commitSha}`, {
+    fetch(`/api/statification/pushtoprod?sha=${sha}`, {
       method: 'POST',
       credentials: 'same-origin'
     }).then((response) => {
@@ -480,7 +480,7 @@ function * pushToProdSaga (action) {
   try {
     // send the submit request to the server
     const { result, timeout } = yield race({
-      result: call(pushToProd, action.commitSha),
+      result: call(pushToProd, action.sha),
       timeout: call(delay, 120000)
     })
     if (timeout) { throw new Error('timeout') }
@@ -511,12 +511,12 @@ function * pushToProdSaga (action) {
 
 /**
  *
- * saveDataSaga is used to push the commit when the statif preview is ok
- * @param  {[type]} commitSha          the commit sha of the statification to visualize
+ * saveDataSaga is used to save the statif when the preview is ok
+ * @param  {[type]} sha          the archive sha of the statification to visualize
  */
-function visualize (commitSha) {
+function visualize (sha) {
   return new Promise((resolve, reject) => {
-    fetch(`/api/statification/visualize?commit=${commitSha}`, {
+    fetch(`/api/statification/visualize?sha=${sha}`, {
       method: 'POST',
       credentials: 'same-origin'
     }).then((response) => {
@@ -546,7 +546,7 @@ function * visualizeSaga (action) {
   try {
     // send the submit request to the server
     const { result, timeout } = yield race({
-      result: call(visualize, action.commitSha),
+      result: call(visualize, action.sha),
       timeout: call(delay, 120000)
     })
     if (timeout) { throw new Error('timeout') }
@@ -661,7 +661,7 @@ function * watchStatificationsSagas () {
   yield takeEvery('SAGA_STATIFICATION_STOP_PROCESS', stopProcessSaga)
   yield takeEvery('SAGA_STATIFICATION_LOAD_DATA', loadDataSaga)
   yield takeEvery('SAGA_STATIFICATION_CHECK_STATUS', checkStatusProcessSaga)
-  yield takeEvery('SAGA_STATIFICATION_COMMIT', commitSaga)
+  yield takeEvery('SAGA_STATIFICATION_SAVE', saveSaga)
   yield takeEvery('SAGA_STATIFICATION_PUSH_TO_PROD', pushToProdSaga)
   yield takeEvery('SAGA_STATIFICATION_VISUALIZE', visualizeSaga)
   yield takeEvery('SAGA_STATIFICATION_CHECK_CURRENT_LOG', checkLogCurrentStatificationSaga)

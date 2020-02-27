@@ -39,9 +39,9 @@ const moment = require('moment')
 /**
  * Define how the row id should be got
  * @param  {Object} row the object row
- * @return {string}     the commit sha of the row
+ * @return {string}     the archive sha of the row
  */
-const getRowId = row => row.commit
+const getRowId = row => row.sha
 
 /**
  * Define how is created a row in the list
@@ -171,8 +171,8 @@ class StatificationList extends React.PureComponent {
   componentWillReceiveProps (props) {
     // change selection only if the new current and the old one are different
     if (this.props.list !== props.list) {
-      this.changeSelection([props.list.toJS()[0].commit])
-      this.props.open([props.list.toJS()[0].commit])
+      this.changeSelection([props.list.toJS()[0].sha])
+      this.props.open([props.list.toJS()[0].sha])
     } else if (this.props.current !== props.current) {
       this.changeSelection([props.current])
     }
@@ -191,8 +191,8 @@ class StatificationList extends React.PureComponent {
 
   /**
    * This method is called when a statification is selected
-   * It will change the url with the commit sha corresponding of the selected statification
-   * @param  {[type]} selection The array of selected statification (it contain the list of the commit sha of selected statifications)
+   * It will change the url with the archive sha corresponding of the selected statification
+   * @param  {[type]} selection The array of selected statification (it contain the list of the archive sha of selected statifications)
    */
   onSelectionChange (selection) {
     // copy the var

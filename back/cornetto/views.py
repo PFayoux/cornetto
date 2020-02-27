@@ -35,7 +35,7 @@ bp = Blueprint("cornetto", __name__)
 # =========
 
 
-def commit_required(f):
+def sha_required(f):
     """
     Check if a sha is passed as HTTP POST parameter.
     It is used to decorate route that need this parameter.
@@ -46,22 +46,22 @@ def commit_required(f):
         If 'sha' is not present in the parameter then it will return :
         {
             success: False,
-            error: 'commit_unvalid'
+            error: 'sha_unvalid'
         }
     """
     @functools.wraps(f)
-    def commit_required_wrapped(*args, **kwargs):
+    def sha_required_wrapped(*args, **kwargs):
         s_archive_sha = request.values.get('sha')
         if s_archive_sha is None:
             current_app.logger.error("The sha parameter is empty")
             # return an error code
             return {
                 'success': False,
-                'error': 'commit_unvalid'
+                'error': 'sha_unvalid'
             }
 
         return f(*args, **kwargs)
-    return commit_required_wrapped
+    return sha_required_wrapped
 
 
 def user_required(f):
@@ -212,7 +212,7 @@ def statification_status() -> Dict[str, Any]:
     # get the last statification informations
     last_statif_infos = service_get_last_statif_infos()
 
-    commit = last_statif_infos['sha']
+    sha = last_statif_infos['sha']
     designation = last_statif_infos['designation']
     description = last_statif_infos['description']
     status = last_statif_infos['status']
@@ -228,7 +228,7 @@ def statification_status() -> Dict[str, Any]:
 
     return {
         'isRunning': b_is_running,
-        'sha': commit,
+        'sha': sha,
         'designation': designation,
         'description': description,
         'currentNbItemCrawled': i_current_nb_item_crawled,
@@ -252,9 +252,9 @@ def get_statif_count() -> Dict[str, int]:
 @build_json()
 def get_statif_list() -> Dict[str, Any]:
     """
-    Return the list of committed statification
-    @return a dict containing the list of committed statification,
-    if there is no committed statification then return an empty dict
+    Return the list of saved statification
+    @return a dict containing the list of saved statification,
+    if there is no saved statification then return an empty dict
     """
     # initialize i_limit, i_skip and s_order
     i_limit = 10
@@ -298,7 +298,7 @@ def get_current_statif_info() -> Dict[str, Any]:
 
 @bp.route('/api/statification', methods=["POST", "GET"])
 @build_json()
-@commit_required
+@sha_required
 def get_selected_statif_info() -> Dict[str, Any]:
     """
     Get the chosen statification information, with all the data included in associated objects
@@ -391,7 +391,7 @@ def do_stop_statif() -> Dict[str, bool]:
 
 @bp.route('/api/statification/visualize', methods=["POST", "GET"])
 @build_json()
-@commit_required
+@sha_required
 @user_required
 def do_visualize() -> Dict[str, Any]:
     """
@@ -444,7 +444,7 @@ def do_visualize() -> Dict[str, Any]:
 
 @bp.route('/api/statification/pushtoprod', methods=["POST", "GET"])
 @build_json()
-@commit_required
+@sha_required
 @user_required
 def do_apply_prod() -> Dict[str, Any]:
     """
@@ -498,10 +498,9 @@ def do_apply_prod() -> Dict[str, Any]:
 @bp.route('/api/statification/sha', methods=["POST", "GET"])
 @build_json()
 @user_required
-def do_commit() -> Dict[str, Any]:
+def do_save() -> Dict[str, Any]:
     """
-    Call the service that will sha and push the statification on the git repository
-    and rename the logfile by the sha.
+    Call the service that will save the statification as an archive and rename the logfile by the archive's sha.
     Need an X-Forwarded-User in the request
 
     If an error happen during the process the error will be caught and a python dict will be returned with a specific

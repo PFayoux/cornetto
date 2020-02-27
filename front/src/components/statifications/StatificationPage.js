@@ -64,8 +64,8 @@ class StatificationPage extends React.PureComponent {
   }
 
   /**
-   * dispatch the action pushToProd with the selected statification commit sha, only if the statification has not been already pushed to prod
-   * this.props.id is the commit sha of the statification that is currently selected in the list
+   * dispatch the action pushToProd with the selected statification archive sha, only if the statification has not been already pushed to prod
+   * this.props.id is the archive sha of the statification that is currently selected in the list
    */
   publish () {
     // if the selected statification is not already published, then dispatch the pushToProd action
@@ -75,8 +75,8 @@ class StatificationPage extends React.PureComponent {
   }
 
   /**
-   * dispatch the action visualize with the selected statification commit sha, only if the statification has not been already visualized
-   * this.props.id is the commit sha of the statification that is currently selected in the list
+   * dispatch the action visualize with the selected statification archive sha, only if the statification has not been already visualized
+   * this.props.id is the archive sha of the statification that is currently selected in the list
    */
   visualize () {
     // if the selected statification is not already visualized, then dispatch the visualize action

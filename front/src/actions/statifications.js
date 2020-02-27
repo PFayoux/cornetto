@@ -33,13 +33,13 @@ export const setActiveStep = activeStep => ({
 })
 
 /**
- * Call the route STATIFICATION_SET_COMMIT_SHA for the reducers Statifications
- * This set the commit sha of the last statification, it will be use when the user will be on the step 3 to push to prod
- * @param {string} commitSha the commit sha to set
+ * Call the route STATIFICATION_SET_SAVE_SHA for the reducers Statifications
+ * This set the archive sha of the last statification, it will be use when the user will be on the step 3 to push to prod
+ * @param {string} sha the archive sha to set
  */
-export const setCommitSha = commitSha => ({
-  type: 'STATIFICATION_SET_COMMIT_SHA',
-  commitSha
+export const setsha = sha => ({
+  type: 'STATIFICATION_SET_SAVE_SHA',
+  sha
 })
 
 /**

@@ -43,11 +43,11 @@ const mapDispatchToProps = (dispatch, props) => ({
   setCurrent: (id) => {
     dispatch(setCurrent(id))
   },
-  visualize: (commitSha) => {
-    dispatch(statificationsVisualize(commitSha))
+  visualize: (sha) => {
+    dispatch(statificationsVisualize(sha))
   },
-  pushToProd: (commitSha) => {
-    dispatch(statificationsPushToProd(commitSha))
+  pushToProd: (sha) => {
+    dispatch(statificationsPushToProd(sha))
   },
   load: (id) => {
     dispatch(statificationsLoadData(id, props.list))

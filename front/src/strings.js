@@ -29,9 +29,9 @@ export default {
         subprocess: 'Une erreur a eu lieu lors du traitement côté serveur. Veuillez contacter un administrateur.',
         process_running: 'Un processus de statification est en cours, cette opération est interdite. Veuillez raffraichir la page si vous ne voyez pas la bar de progression, si le problème persiste veuillez contacter un administrateur.',
         database: 'Un problème est survenue lorsque le système a tenté de retrouver la statification dans la base de donnée. Veuillez contacter un administrateur.',
-        commit_nothing: 'Rien n\'est a enregistrer. La dernière statification est déjà sauvergardée. Si cette erreur persiste, veuillez contacter un administrateur.',
-        commit_unvalid: 'L\'identifiant de commit de la statification n\'est pas correct. Cette erreur nécéssite l\'intervention d\'un administrateur.',
-        commit: 'Une erreur est survenue pendant l\'enregistrement de la statification. Veuillez contacter un administrateur.',
+        save_nothing: 'Rien n\'est a enregistrer. La dernière statification est déjà sauvergardée. Si cette erreur persiste, veuillez contacter un administrateur.',
+        sha_unvalid: 'Le sha de la statification n\'est pas correct. Cette erreur nécéssite l\'intervention d\'un administrateur.',
+        save: 'Une erreur est survenue pendant l\'enregistrement de la statification. Veuillez contacter un administrateur.',
         visualize: 'Une erreur est survenue lors de la publication pour la prévisualisation. Veuillez contacter un administrateur.',
         forwarded_user_empty: 'L\'entête HTTP X-Forwarded-User n\'est pas renseigné. Veuillez contacter un administrateur.',
         route_access: 'Un autre processus est en cours, vous ne pouvez pas réaliser cette action en parallèle, veuillez-attendre.'
@@ -45,10 +45,10 @@ export default {
     },
     infos: {
       text: {
-        commit: 'Enregistrement réussi.',
+        save: 'Enregistrement réussi.',
         pushtoprod: 'Publication réussi.',
         visualize: 'Prévisualisation chargée.',
-        start_commit: 'Démarrage de l\'enregistrement.',
+        start_save: 'Démarrage de l\'enregistrement.',
         start_pushtoprod: 'Chargement de la publication.',
         start_visualize: 'Chargement de la prévisualisation.'
       }
@@ -123,7 +123,7 @@ export default {
       },
       statut: {
         label: 'Statut',
-        commit: '',
+        sha: '',
         prod: 'prod',
         visualize: 'visu'
       },

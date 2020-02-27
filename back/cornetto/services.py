@@ -226,7 +226,7 @@ def service_get_statif_info(s_archive_sha: str) -> Dict[str, Any]:
         # return an error code if the sha is not valid
         return {
             'success': False,
-            'error': 'commit_unvalid'
+            'error': 'sha_unvalid'
         }
     except sh.ErrorReturnCode:
         # if an error has occurred during a subprocess
@@ -419,7 +419,7 @@ def service_do_apply_prod(s_user: str, s_archive_sha: str) -> Dict[str, Any]:
     except SyntaxError as e:
         current_app.logger.error(e)
         # on fail write an error
-        raise RuntimeError('commit_unvalid')
+        raise RuntimeError('sha_unvalid')
     except threading.ThreadError as e:
         current_app.logger.error(str(e))
         # if an error has happened when executing the background thread
@@ -475,7 +475,7 @@ def service_do_visualize(s_user: str, s_archive_sha: str) -> Dict[str, Any]:
     except SyntaxError as e:
         current_app.logger.error(str(e))
         # on fail write an error
-        raise RuntimeError('commit_unvalid')
+        raise RuntimeError('sha_unvalid')
     except threading.ThreadError as e:
         current_app.logger.error(str(e))
         # if an error has happened when executing the background thread

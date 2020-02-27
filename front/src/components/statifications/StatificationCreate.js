@@ -82,7 +82,7 @@ class StatificationCreate extends React.PureComponent {
   }
 
   doPushToProd () {
-    this.props.pushToProd(this.props.currentStatificationCommitSha)
+    this.props.pushToProd(this.props.currentStatificationsha)
 
     // clear the Form
     this.props.clearForm()
@@ -145,7 +145,7 @@ class StatificationCreate extends React.PureComponent {
               {I18n.t('steps.step2')}
             </p>
             <div className='form-buttons'>
-              <Button variant='raised' onClick={this.props.commit} className='button-next' disabled={this.props.loading || this.props.pristine}>{I18n.t('ui.steps.save')}</Button>
+              <Button variant='raised' onClick={this.props.sha} className='button-next' disabled={this.props.loading || this.props.pristine}>{I18n.t('ui.steps.save')}</Button>
               <Button onClick={this.onCancelClick} disabled={this.props.loading || this.props.pristine} className='button-cancel'>{I18n.t('ui.steps.cancel')}</Button>
             </div>
           </div>
@@ -179,8 +179,8 @@ StatificationCreate.propTypes = {
   setDialogText: PropTypes.func,
   setDialogTypeAction: PropTypes.func,
   clearForm: PropTypes.func,
-  commit: PropTypes.func,
-  currentStatificationCommitSha: PropTypes.string,
+  save: PropTypes.func,
+  currentStatificationsha: PropTypes.string,
   loading: PropTypes.bool,
   pristine: PropTypes.bool
 }
@@ -198,8 +198,8 @@ StatificationCreate.defaultProps = {
   setDialogTypeAction: undefined,
   clearForm: undefined,
   pushToProd: undefined,
-  commit: undefined,
-  currentStatificationCommitSha: '',
+  save: undefined,
+  currentStatificationsha: '',
   loading: false,
   pristine: false
 }

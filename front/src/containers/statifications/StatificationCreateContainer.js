@@ -25,7 +25,7 @@ import { setDialogOpen, setDialogTitle, setDialogText, setDialogTypeAction } fro
 const mapStateToProps = (state, props) => ({
   activeStep: state.statifications.get('activeStep', 0),
   statificationsSaveData: state.statifications.get('statificationsSaveData'),
-  currentStatificationCommitSha: state.statifications.get('commitSha'),
+  currentStatificationsha: state.statifications.get('sha'),
   loading: state.statifications.get('loading')
 })
 
@@ -33,11 +33,11 @@ const mapDispatchToProps = (dispatch, props) => ({
   setActiveStep (step) {
     dispatch(setActiveStep(step))
   },
-  commit () {
+  save () {
     dispatch(statificationsCommit())
   },
-  pushToProd (commitSha) {
-    dispatch(statificationsPushToProd(commitSha))
+  pushToProd (sha) {
+    dispatch(statificationsPushToProd(sha))
   },
   showDialog: (isOpen) => {
     dispatch(setDialogOpen(isOpen))

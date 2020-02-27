@@ -47,11 +47,11 @@ export const statificationsStopProcess = () => ({
 
 /**
  * Call the saga SAGA_STATIFICATION_LOAD_DATA with the needed parameters
- * @param  {[type]} commitSha the commit sha of the statification to load
+ * @param  {[type]} sha the archive sha of the statification to load
  */
-export const statificationsLoadData = commitSha => ({
+export const statificationsLoadData = sha => ({
   type: 'SAGA_STATIFICATION_LOAD_DATA',
-  commitSha
+  sha
 })
 
 /**
@@ -62,28 +62,28 @@ export const statificationsCheckCurrentLog = () => ({
 })
 
 /**
- * Call the saga SAGA_STATIFICATION_COMMIT
+ * Call the saga SAGA_STATIFICATION_SAVE
  */
 export const statificationsCommit = () => ({
-  type: 'SAGA_STATIFICATION_COMMIT'
+  type: 'SAGA_STATIFICATION_SAVE'
 })
 
 /**
  * Call the saga SAGA_STATIFICATION_PUSH_TO_PROD with the needed parameters
- * @param  {[type]} commitSha the commit sha of the statification to push to production
+ * @param  {[type]} sha the archive sha of the statification to push to production
  */
-export const statificationsPushToProd = commitSha => ({
+export const statificationsPushToProd = sha => ({
   type: 'SAGA_STATIFICATION_PUSH_TO_PROD',
-  commitSha
+  sha
 })
 
 /**
  * Call the saga SAGA_STATIFICATION_VISUALIZE with the needed parameters
- * @param  {[type]} commitSha the commit sha of the statification to push to production
+ * @param  {[type]} sha the archive sha of the statification to push to production
  */
-export const statificationsVisualize = commitSha => ({
+export const statificationsVisualize = sha => ({
   type: 'SAGA_STATIFICATION_VISUALIZE',
-  commitSha
+  sha
 })
 
 /**

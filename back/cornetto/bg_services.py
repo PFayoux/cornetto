@@ -80,7 +80,7 @@ def bg_save_to_archive(s_user: str, s_archive_repository: str,
                                                          datetime.utcnow(),
                                                          s_user,
                                                          Actions.SAVE_STATIFICATION)
-        logger.info('> Commit operations terminated')
+        logger.info('> Save operations terminated')
 
         # on success write a success code and the sha id
         write_status_background(
