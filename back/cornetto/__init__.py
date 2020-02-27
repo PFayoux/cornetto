@@ -104,7 +104,7 @@ def create_app(config_file_path: str = None, config_dict: Dict[str, Any] = None)
 
     # create a statificationProcess object with the configuration
     app.statifProcess = StatificationProcess.StatificationProcess(
-        s_logger=app.logger_name,
+        s_logger=app.name,
         s_repository_path=app.config['STATIC_REPOSITORY'],
         s_python_path=app.config['PYTHONPATH'],
         s_urls=app.config['URLS'],

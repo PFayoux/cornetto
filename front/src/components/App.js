@@ -101,7 +101,7 @@ class App extends React.PureComponent {
       <MuiThemeProvider theme={theme}>
         <header>
           <Toolbar className='toolbar'>
-            <img src={Image} className='logo' />
+            <img src={Image} className='logo' alt='' />
             <a href={I18n.t('url.site_prod')} target='blank' className='websiteLink'>{I18n.t('url.name')}</a>
             <Tabs value={this.props.tab} onChange={this.onTabChange} className='tabs'>
               <Tab label={I18n.t('ui.tabs.create')} className='tab' />

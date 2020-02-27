@@ -14,8 +14,7 @@
  GNU General Public License for more details.
  You should have received a copy of the GNU General Public License
  */
-import { takeEvery, put, call, race } from 'redux-saga/effects'
-import { delay } from 'redux-saga'
+import { takeEvery, put, call, race, delay } from 'redux-saga/effects'
 import { pushError } from '../actions/errors'
 import { getErrorMessage } from '../utils'
 import { setList, setLoading, setCount } from '../actions/statifications'

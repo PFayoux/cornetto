@@ -14,11 +14,10 @@
  GNU General Public License for more details.
  You should have received a copy of the GNU General Public License
  */
-import { takeEvery, put, call, race } from 'redux-saga/effects'
-import { delay } from 'redux-saga'
+import { takeEvery, put, call, race, delay } from 'redux-saga/effects'
 import { I18n } from 'react-redux-i18n'
 import { pushError } from '../actions/errors'
-import { getErrorMessage, getInfoMessage, clearAllSetInterval } from '../utils'
+import { getErrorMessage, getInfoMessage } from '../utils'
 
 import {
   setFormData, setFormErrors, setFormLoading, setLoading, setWaitForServer, setListInfoLoading,
@@ -359,7 +358,10 @@ function * stopProcessSaga (action) {
       result: call(stopProcess),
       timeout: call(delay, 120000)
     })
-    if (timeout) { throw new Error('timeout') }
+    if (timeout) {
+      throw new Error('timeout')
+    }
+
     // catch the HTML error send by the server
   } catch (error) {
     // print a corresponding message to the user

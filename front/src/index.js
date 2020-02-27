@@ -102,13 +102,14 @@ const reducers = persistCombineReducers(config, {
 })
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
-const store = createStore(
+export const store = createStore(
   connectRouter(history)(reducers),
   initialState,
   composeEnhancers(applyMiddleware(sagaMiddleware, routingMiddleware, thunk))
 )
 
-const persistor = persistStore(store, {}, () => {
+export const persistor = persistStore(store, {}, () => {
+  console.log('test')
   sagaMiddleware.run(sagas)
 
   I18n.setTranslationsGetter(() => store.getState().i18n.translations)

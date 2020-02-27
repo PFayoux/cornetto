@@ -1,40 +1,52 @@
 {
-  "name": "cornetto",
-  "version": "2.0.1",
-  "private": true,
+  "name": "front",
+  "version": "3.0.0",
+  "description": "frontend of the cornetto project",
+  "main": ".eslintrc.js",
   "dependencies": {
-    "@babel/polyfill": "^7.0.0",
-    "@devexpress/dx-core": "^1.7.0",
-    "@devexpress/dx-grid-core": "^1.7.0",
-    "@devexpress/dx-react-core": "^1.7.0",
-    "@devexpress/dx-react-grid": "^1.7.0",
-    "@devexpress/dx-react-grid-material-ui": "^1.7.0",
-    "@material-ui/core": "^3.0.1",
-    "@material-ui/icons": "^3.0.1",
-    "connected-react-router": "^4.4.1",
-    "immutable": "^3.8.2",
-    "json2csv": "^4.3.1",
-    "moment": "^2.22.2",
-    "prop-types": "^15.6.2",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
-    "react-redux": "^5.0.7",
+    "@babel/polyfill": "^7.8.3",
+    "@devexpress/dx-core": "^2.4.1",
+    "@devexpress/dx-grid-core": "^2.4.1",
+    "@devexpress/dx-react-core": "^2.4.1",
+    "@devexpress/dx-react-grid": "^2.4.1",
+    "@devexpress/dx-react-grid-material-ui": "^2.4.1",
+    "@material-ui/core": "^4.9.4",
+    "@material-ui/icons": "^4.9.1",
+    "connected-react-router": "^6.7.0",
+    "immutable": "^4.0.0-rc.12",
+    "json2csv": "^4.5.4",
+    "moment": "^2.24.0",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-redux": "^7.2.0",
     "react-redux-i18n": "^1.9.3",
-    "react-router": "^4.3.1",
-    "react-router-dom": "^4.3.1",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
     "react-router-redux": "^4.0.8",
-    "react-scripts": "^2.1.1",
-    "redux": "^4.0.0",
-    "redux-form": "^7.4.2",
+    "react-scripts": "^3.4.0",
+    "redux": "^4.0.5",
+    "redux-form": "^8.3.0",
     "redux-form-material-ui": "^4.3.4",
     "redux-immutable": "^4.0.0",
-    "redux-persist": "^5.10.0",
+    "redux-persist": "^6.0.0",
     "redux-persist-transform-compress": "^4.2.0",
     "redux-persist-transform-encrypt": "^2.0.1",
-    "redux-persist-transform-immutable": "^5.0.0",
-    "redux-saga": "^0.16.0",
+    "redux-saga": "^1.1.3",
     "redux-thunk": "^2.3.0",
+    "remotedev-serialize": "^0.1.8",
     "whatwg-fetch": "^3.0.0"
+  },
+  "proxy": "http://localhost:8000",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-config-standard-react": "^9.2.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-standard": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -42,21 +54,27 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:8000",
-  "devDependencies": {
-    "eslint": "^5.8.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-config-standard-react": "^7.0.2",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-promise": "^4.0.1",
-    "eslint-plugin-react": "^7.11.1",
-    "eslint-plugin-standard": "^4.0.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ANSSI-FR/cornetto.git"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ANSSI-FR/cornetto/issues"
+  },
+  "homepage": "https://github.com/ANSSI-FR/cornetto#readme",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not ie <= 11",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
 }

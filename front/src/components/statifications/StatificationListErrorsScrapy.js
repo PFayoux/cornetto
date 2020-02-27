@@ -22,8 +22,6 @@ import { Grid, VirtualTable, TableHeaderRow } from '@devexpress/dx-react-grid-ma
 import { SortingState, IntegratedSorting } from '@devexpress/dx-react-grid'
 import { I18n } from 'react-redux-i18n'
 
-const moment = require('moment')
-
 const getRowId = row => row.id
 
 const cellTemplate = (props) => {
