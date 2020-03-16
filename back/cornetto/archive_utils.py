@@ -2,9 +2,9 @@
 """
 Cornetto
 
-Copyright (C) 2018–2019 ANSSI
+Copyright (C) 2018–2020 ANSSI
 Contributors:
-2018–2019 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
+2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -39,8 +39,12 @@ def create_archive_and_rename_to_sha(s_static_repository: str,
 
     for log in tar(
             '-cf',
-            s_static_repository+'.tar.gz',
-            s_static_repository,
+            'archive.tar.gz',
+            '-C',
+            # get the parent directory of s_static_repository
+            os.path.abspath(os.path.join(s_static_repository, os.pardir)),
+            # get the last directory of the path s_static_repository
+            os.path.basename(os.path.normpath(s_static_repository)),
             _cwd='/tmp/',
             _tty_out=False,
             _iter='err'):
@@ -49,15 +53,18 @@ def create_archive_and_rename_to_sha(s_static_repository: str,
 
     logger.info('> Create the statification archive sha')
 
-    s_archive_sha = None
-    for sha in shasum(s_static_repository+'.tar.gz', _cwd='/tmp/', _tty_out=False, _iter='out'):
-        s_archive_sha = sha
+    if not os.path.isfile('/tmp/archive.tar.gz'):
+        raise RuntimeError('The archive.tar.gz file does\'nt exist')
+
+    s_archive_sha = ''
+    for resultShasum in shasum('archive.tar.gz', _cwd='/tmp/', _tty_out=False, _iter='out'):
+        s_archive_sha = resultShasum.split(' ')[0]
 
     if s_archive_sha is None:
         raise RuntimeError('The sha is empty')
 
     logger.info('> Rename the archive and move it to the archive directory')
-    os.rename(s_static_repository + '.tar.gz', s_archive_repository + "/" + s_archive_sha + ".tar.gz")
+    os.rename('/tmp/archive.tar.gz', s_archive_repository + "/" + s_archive_sha + ".tar.gz")
 
     return s_archive_sha
 

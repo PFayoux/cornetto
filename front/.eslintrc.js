@@ -3,9 +3,6 @@ module.exports = {
     "globals": {
       "React": true
     },
-    "ecmaFeatures": {
-      "jsx": true
-    },
     "plugins": [
       "react"
     ],

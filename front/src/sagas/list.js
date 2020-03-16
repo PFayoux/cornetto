@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -21,35 +21,33 @@ import { setList, setLoading, setCount } from '../actions/statifications'
 
 /**
  *
- * [listStatifications description]
- * @param  {[type]} limit [description]
- * @param  {[type]} skip  [description]
- * @return {[type]}       [description]
+ * Do the request to get the list of statification
+ * @param  {number} limit the maximum of statification to get
+ * @param  {number} skip  the number of statification to skip in the query
+ * @return {Array}       return an Array of statification Object
  */
-function listStatifications (limit, skip) {
-  return new Promise((resolve, reject) => {
+async function listStatifications (limit, skip) {
+  try {
     const url = `/api/statification/list?limit=${limit}&skip=${skip}`
-    fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       credentials: 'same-origin'
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data.statifications)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data.statifications
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- * [listStatificationsSaga description]
- * @param  {[type]}    action [description]
- * @return {Generator}        [description]
+ * This Saga will get the list of statification
+ * @param  {Object}    action the action object that triggered the Saga
  */
 function * listStatificationsSaga (action) {
   try {
@@ -57,12 +55,15 @@ function * listStatificationsSaga (action) {
 
     const { result, timeout } = yield race({
       result: call(listStatifications, action.limit, action.skip),
-      timeout: call(delay, 20000)
+      timeout: delay(20000)
     })
-    if (timeout) { throw new Error('timeout') }
+
+    if (timeout) {
+      throw new Error('timeout')
+    }
 
     yield put(setLoading(false))
-
+    // set the list inside the statifications reducer
     yield put(setList(result))
   } catch (error) {
     yield put(setLoading(false))
@@ -72,41 +73,41 @@ function * listStatificationsSaga (action) {
 
 /**
  *
- * [countStatifications description]
- * @return {[type]} [description]
+ * Do the request to get the number of statification
+ * @return {number} return the number of statification in the database
  */
-function countStatifications () {
-  return new Promise((resolve, reject) => {
+async function countStatifications () {
+  try {
     const url = '/api/statification/count'
-    fetch(url, {
-      method: 'GET',
+    const response = await fetch(url, {
+      method: 'POST',
       credentials: 'same-origin'
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data.count)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data.count
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- * [countStatificationsSaga description]
- * @param  {[type]}    action [description]
- * @return {Generator}        [description]
+ * This Saga will get the number of Statification
+ * @param  {Object}    action the action object that triggered the Saga
  */
 function * countStatificationsSaga (action) {
   try {
     const { result, timeout } = yield race({
       result: call(countStatifications),
-      timeout: call(delay, 20000)
+      timeout: delay(20000)
     })
-    if (timeout) { throw new Error('timeout') }
+    if (timeout) {
+      throw new Error('timeout')
+    }
 
     yield put(setCount(result))
   } catch (error) {

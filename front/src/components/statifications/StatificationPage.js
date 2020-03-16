@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -51,16 +51,15 @@ class StatificationPage extends React.PureComponent {
       this.props.load(this.props.id)
     }
   }
-  componentWillReceiveProps (props) {
-    // if the statification id has changed
-    if (this.props.id !== props.id) {
-      // change current statification
-      this.props.setCurrent(props.id)
-      // reload the statification
-      this.props.load(props.id)
-    }
 
-    return props
+  componentWillUpdate (nextProps, nextState) {
+    // if the statification id has changed
+    if (this.props.id !== nextProps.id) {
+      // change current statification
+      this.props.setCurrent(nextProps.id)
+      // reload the statification
+      this.props.load(nextProps.id)
+    }
   }
 
   /**
@@ -116,17 +115,15 @@ class StatificationPage extends React.PureComponent {
             accordeon='acc1'
             open={this.props.activeAccordeon === 'acc1'}
           >
-            { this.props.nb_errors_html !== 0 &&
-            <StatificationListErrorsHTML
-              errors_html={this.props.errors_html}
-              list_loading={this.props.list_loading}
-            />
-            }
-            { this.props.nb_errors_html === 0 &&
-            <div>
-              {I18n.t('statification.errors_html.no_errors')}
-            </div>
-            }
+            {this.props.nb_errors_html !== 0 &&
+              <StatificationListErrorsHTML
+                errors_html={this.props.errors_html}
+                list_loading={this.props.list_loading}
+              />}
+            {this.props.nb_errors_html === 0 &&
+              <div>
+                {I18n.t('statification.errors_html.no_errors')}
+              </div>}
           </AccordeonWithCount>
           <AccordeonWithCount
             title={I18n.t('statification.errors_type_mime.title')}
@@ -136,17 +133,15 @@ class StatificationPage extends React.PureComponent {
             accordeon='acc2'
             open={this.props.activeAccordeon === 'acc2'}
           >
-            { this.props.nb_errors_type_mime !== 0 &&
-            <StatificationListErrorsTypeMime
-              errors_type_mime={this.props.errors_type_mime}
-              list_loading={this.props.list_loading}
-            />
-            }
-            { this.props.nb_errors_type_mime === 0 &&
+            {this.props.nb_errors_type_mime !== 0 &&
+              <StatificationListErrorsTypeMime
+                errors_type_mime={this.props.errors_type_mime}
+                list_loading={this.props.list_loading}
+              />}
+            {this.props.nb_errors_type_mime === 0 &&
               <div>
                 {I18n.t('statification.errors_type_mime.no_errors')}
-              </div>
-            }
+              </div>}
           </AccordeonWithCount>
           <AccordeonWithCount
             title={I18n.t('statification.scanned_files.title')}
@@ -188,10 +183,9 @@ class StatificationPage extends React.PureComponent {
           <Card>
             {this.props.status !== 3 &&
               <div className='button-bar'>
-                <Button variant='raised' onClick={this.publish} className='button-next' disabled={this.props.loading} >{I18n.t('ui.buttons.publish')}</Button>
-                <Button variant='raised' onClick={this.visualize} className='button-next' disabled={this.props.loading} >{I18n.t('ui.buttons.visualize')}</Button>
-              </div>
-            }
+                <Button variant='contained' onClick={this.publish} className='button-next' disabled={this.props.loading}>{I18n.t('ui.buttons.publish')}</Button>
+                <Button variant='contained' onClick={this.visualize} className='button-next' disabled={this.props.loading}>{I18n.t('ui.buttons.visualize')}</Button>
+              </div>}
           </Card>
         </div>
       </div>

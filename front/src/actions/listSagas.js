@@ -14,26 +14,20 @@
  GNU General Public License for more details.
  You should have received a copy of the GNU General Public License
  */
-/* fallback */
-@font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Material Icons'), local('MaterialIcons-Regular'), url(../fonts/material-icons.woff2) format('woff2');
-}
+/**
+ * Call the saga SAGA_LIST_STATIFICATIONS with the needed parameters
+ * @param  {[type]} limit the number of statification to show/get per page in the list
+ * @param  {[type]} skip  the number of statification to skip before requesting new statification
+ */
+export const listStatifications = (limit, skip) => ({
+  type: 'SAGA_LIST_STATIFICATIONS',
+  limit,
+  skip
+})
 
-.material-icons {
-  font-family: 'Material Icons';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -moz-font-feature-settings: 'liga';
-  -moz-osx-font-smoothing: grayscale;
-}
+/**
+ * Call the saga SAGA_LIST_STATIFICATIONS_COUNT
+ */
+export const countStatifications = () => ({
+  type: 'SAGA_LIST_STATIFICATIONS_COUNT'
+})

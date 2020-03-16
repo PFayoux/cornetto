@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -96,22 +96,24 @@ class StatificationForm extends React.PureComponent {
   }
 
   componentDidMount () {
-    // if the sta
+    // if the id is -1 clear the form
     if (this.props.id === -1) {
       this.props.clearForm()
     }
   }
 
-  componentWillReceiveProps (props) {
+  componentWillUpdate (nextProps, nextState) {
     // if the component isn't initialized, initialize it
-    if (!props.initialized) { props.initialize(props.initialValues) }
-
-    // if the id change and isn't -1 clear the form
-    if (this.props.id !== props.id) {
-      if (props.id === -1) { this.props.clearForm() }
+    if (!nextProps.initialized) {
+      this.props.initialize(nextProps.initialValues)
     }
 
-    return props
+    // if the id change and isn't -1 clear the form
+    if (this.props.id !== nextProps.id) {
+      if (nextProps.id === -1) {
+        this.props.clearForm()
+      }
+    }
   }
 
   /**
@@ -134,14 +136,18 @@ class StatificationForm extends React.PureComponent {
    * This method pass to the next step
    */
   handleNext () {
-    if (this.props.activeStep < NBSTEPS - 1) { this.props.setActiveStep(this.props.activeStep + 1) }
+    if (this.props.activeStep < NBSTEPS - 1) {
+      this.props.setActiveStep(this.props.activeStep + 1)
+    }
   }
 
   /**
    * This method pass to the previous step
    */
   handleBack () {
-    if (this.props.activeStep > 0) { this.props.setActiveStep(this.props.activeStep - 1) }
+    if (this.props.activeStep > 0) {
+      this.props.setActiveStep(this.props.activeStep - 1)
+    }
   }
 
   render () {
@@ -161,26 +167,21 @@ class StatificationForm extends React.PureComponent {
               <FormTextInput form='statification' field='description' multiline rowsMax={4} disabled={this.props.statificationRunning || this.props.disabled} />
             </div>
           </div>
-          { !this.props.disabled &&
-          <div className='statificationform-buttons form-buttons'>
-            { !this.props.statificationRunning &&
-              <Button variant='raised' type='submit' className='button-next' disabled={this.props.loading || !this.props.valid || this.props.submitting} >{I18n.t('ui.buttons.submit')}</Button>
-            }
-            { runningAndNotBeingStopped &&
-              <LinearProgress
-                variant='determinate'
-                value={Math.floor((this.props.statificationProgress / this.props.statificationsTotalPages) * 100)}
-                className='linearProgress'
-              />
-            }
-            { runningAndBeingStopped &&
-              <LinearProgress className='linearProgress' />
-            }
-            { runningAndNotBeingStopped &&
-              <Button variant='raised' onClick={this.onCancelClick} className='button-cancel button-centered' disabled={this.props.isBeingStopped}>{I18n.t('ui.buttons.cancel')}</Button>
-            }
-          </div>
-          }
+          {!this.props.disabled &&
+            <div className='statificationform-buttons form-buttons'>
+              {!this.props.statificationRunning &&
+                <Button variant='contained' type='submit' className='button-next' disabled={this.props.loading || !this.props.valid || this.props.submitting}>{I18n.t('ui.buttons.submit')}</Button>}
+              {runningAndNotBeingStopped &&
+                <LinearProgress
+                  variant='determinate'
+                  value={Math.floor((this.props.statificationProgress / this.props.statificationsTotalPages) * 100)}
+                  className='linearProgress'
+                />}
+              {runningAndBeingStopped &&
+                <LinearProgress className='linearProgress' />}
+              {runningAndNotBeingStopped &&
+                <Button variant='contained' onClick={this.onCancelClick} className='button-cancel button-centered' disabled={this.props.isBeingStopped}>{I18n.t('ui.buttons.cancel')}</Button>}
+            </div>}
         </form>
       </div>
     )

@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -14,7 +14,6 @@
  GNU General Public License for more details.
  You should have received a copy of the GNU General Public License
  */
-import 'moment/locale/fr.js'
 import { I18n } from 'react-redux-i18n'
 
 /**
@@ -34,7 +33,7 @@ export const getErrorMessage = (error) => {
   } else if (error) {
     return I18n.t(`infos.text.${error}`)
   } else {
-    return I18n.t(`errors.text.unknown`)
+    return I18n.t('errors.text.unknown')
   }
 }
 

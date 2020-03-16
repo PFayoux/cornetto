@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -35,6 +35,7 @@ export default class StatusElement extends React.PureComponent {
         return ''
     }
   }
+
   /**
    * getBgColor get the color for the background corresponding to the level set in the propos
    * @return {[type]} the correspondingbackground-color value for css
@@ -51,6 +52,7 @@ export default class StatusElement extends React.PureComponent {
         return 'transparent'
     }
   }
+
   /**
    * [render description]
    * @return {[type]} [description]
@@ -60,7 +62,7 @@ export default class StatusElement extends React.PureComponent {
       backgroundColor: this.getBgColor()
     }
     return (
-      <span className='statusElement' style={style} >
+      <span className='statusElement' style={style}>
         {this.getStatusText()}
       </span>
     )

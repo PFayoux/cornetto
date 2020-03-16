@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -20,13 +20,11 @@ import { initialize, reset, submit } from 'redux-form/immutable'
 import StatificationForm from '../../components/statifications/StatificationForm'
 import { newForm } from '../../actions/statifications'
 import { setDialogOpen, setDialogTitle, setDialogText, setDialogTypeAction } from '../../actions/dialog'
-import { statificationsSubmitForm, statificationsCheckStatus } from '../../actions/sagas'
+import { statificationsSubmitForm, statificationsCheckStatus } from '../../actions/statificationSagas'
 
 const mapStateToProps = (state, props) => ({
   data: state.statifications.get('form', null),
   initialValues: state.statifications.getIn(['form', 'data']),
-  optionsNative: state.options.get('native'),
-  optionsMaterial: state.options.get('material'),
   activeStep: state.statifications.get('activeStep', 0),
   statificationRunning: state.statifications.get('statificationRunning'),
   statificationProgress: state.statifications.get('statificationProgress'),

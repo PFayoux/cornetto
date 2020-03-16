@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -42,6 +42,7 @@ export default class CountElement extends React.PureComponent {
         return '#5293d8'
     }
   }
+
   /**
    * [render description]
    * @return {[type]} [description]
@@ -51,7 +52,7 @@ export default class CountElement extends React.PureComponent {
       backgroundColor: this.getBgColor()
     }
     return (
-      <span className='pop' style={style} >
+      <span className='pop' style={style}>
         {this.props.count}
       </span>
     )

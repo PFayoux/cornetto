@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -101,11 +101,10 @@ class StatificationDialog extends React.Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            { this.props.typeAction !== 'redirect_process_running' &&
-            <Button onClick={this.handleClose} className='button-cancel' autoFocus>
-              {I18n.t('ui.buttons.cancel')}
-            </Button>
-            }
+            {this.props.typeAction !== 'redirect_process_running' &&
+              <Button onClick={this.handleClose} className='button-cancel' autoFocus>
+                {I18n.t('ui.buttons.cancel')}
+              </Button>}
             <Button onClick={this.handleCloseConfirm} className='button-next'>
               {I18n.t('ui.buttons.confirm')}
             </Button>

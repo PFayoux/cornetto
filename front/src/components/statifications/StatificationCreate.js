@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -124,43 +124,39 @@ class StatificationCreate extends React.PureComponent {
           </Step>
         </Stepper>
         {this.props.activeStep === 0 &&
-        <div className='step-block'>
-          <StatificationFormContainer form='statification_form' id={-1} />
-        </div>
-        }
+          <div className='step-block'>
+            <StatificationFormContainer form='statification_form' id={-1} />
+          </div>}
         {this.props.activeStep === 1 &&
           <div className='step-block'>
             <p className='text'>
               {I18n.t('steps.step1')}
             </p>
             <div className='form-buttons'>
-              <Button variant='raised' href={I18n.t('url.site_static')} target='_blank' onClick={this.handleNext} className='button-next' disabled={this.props.loading || this.props.pristine}>{I18n.t('ui.steps.preview')}</Button>
+              <Button variant='contained' href={I18n.t('url.site_static')} target='_blank' onClick={this.handleNext} className='button-next' disabled={this.props.loading || this.props.pristine}>{I18n.t('ui.steps.preview')}</Button>
               <Button onClick={this.onCancelClick} disabled={this.props.loading || this.props.pristine} className='button-cancel'>{I18n.t('ui.steps.cancel')}</Button>
             </div>
-          </div>
-        }
+          </div>}
         {this.props.activeStep === 2 &&
           <div className='step-block'>
             <p className='text'>
               {I18n.t('steps.step2')}
             </p>
             <div className='form-buttons'>
-              <Button variant='raised' onClick={this.props.sha} className='button-next' disabled={this.props.loading || this.props.pristine}>{I18n.t('ui.steps.save')}</Button>
+              <Button variant='contained' onClick={this.props.save} className='button-next' disabled={this.props.loading || this.props.pristine}>{I18n.t('ui.steps.save')}</Button>
               <Button onClick={this.onCancelClick} disabled={this.props.loading || this.props.pristine} className='button-cancel'>{I18n.t('ui.steps.cancel')}</Button>
             </div>
-          </div>
-        }
+          </div>}
         {this.props.activeStep === 3 &&
           <div className='step-block'>
             <p className='text'>
               {I18n.t('steps.step3')}
             </p>
             <div className='form-buttons'>
-              <Button variant='raised' onClick={this.doPushToProd} className='button-next' disabled={this.props.loading || this.props.pristine}>{I18n.t('ui.steps.publish')}</Button>
+              <Button variant='contained' onClick={this.doPushToProd} className='button-next' disabled={this.props.loading || this.props.pristine}>{I18n.t('ui.steps.publish')}</Button>
               <Button onClick={this.onNewClick} disabled={this.props.loading || this.props.pristine} className='button-cancel restart'>{I18n.t('ui.steps.new')}</Button>
             </div>
-          </div>
-        }
+          </div>}
       </div>
     )
   }

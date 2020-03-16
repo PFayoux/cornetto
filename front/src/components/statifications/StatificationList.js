@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -168,25 +168,23 @@ class StatificationList extends React.PureComponent {
   }
 
   // when the component receive new props
-  componentWillReceiveProps (props) {
+  componentWillUpdate (nextProps, nextState) {
     // change selection only if the new current and the old one are different
-    if (this.props.list !== props.list) {
-      this.changeSelection([props.list.toJS()[0].sha])
-      this.props.open([props.list.toJS()[0].sha])
-    } else if (this.props.current !== props.current) {
-      this.changeSelection([props.current])
+    if (this.props.list !== nextProps.list) {
+      this.changeSelection([nextProps.list.toJS()[0].sha])
+      this.props.open([nextProps.list.toJS()[0].sha])
+    } else if (this.props.current !== nextProps.current) {
+      this.changeSelection([nextProps.current])
     }
 
     // get the number of statification
     this.props.countStatifications()
 
     // if the limit or skip properties have changed
-    if (props.limit !== this.props.limit || props.skip !== this.props.skip) {
+    if (nextProps.limit !== this.props.limit || nextProps.skip !== this.props.skip) {
       // request the new list of statification
-      this.props.listStatifications(props.limit, props.skip)
+      this.props.listStatifications(nextProps.limit, nextProps.skip)
     }
-
-    return props
   }
 
   /**
@@ -280,15 +278,14 @@ class StatificationList extends React.PureComponent {
         {this.props.loading &&
           <div className='statificationlist-loading-parent'>
             <LinearProgress className='statificationlist-loading-child_short' />
-          </div>
-        }
+          </div>}
         <Button
-          variant='raised'
+          variant='contained'
           className='listDrowpdownButton'
           onClick={this.changeLimit}
         >
-          { (this.props.limit === 10) && <span>{I18n.t('ui.buttons.show_all')}</span>}
-          { (this.props.limit !== 10) && <span>{I18n.t('ui.buttons.show_ten_last')}</span>}
+          {(this.props.limit === 10) && <span>{I18n.t('ui.buttons.show_all')}</span>}
+          {(this.props.limit !== 10) && <span>{I18n.t('ui.buttons.show_ten_last')}</span>}
         </Button>
       </div>
     )

@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -19,7 +19,7 @@ import { push } from 'react-router-redux'
 import App from '../components/App'
 import { setUrl, setStatificationIsBeingStopped } from '../actions/statifications'
 import { setDialogOpen, setDialogTitle, setDialogText, setDialogTypeAction } from '../actions/dialog'
-import { statificationsCheckStatus } from '../actions/sagas'
+import { statificationsCheckStatus } from '../actions/statificationSagas'
 
 /**
  * This method is used to get the tab corresponding to the url passed in parameter

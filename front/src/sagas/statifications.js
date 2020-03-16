@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -20,49 +20,50 @@ import { pushError } from '../actions/errors'
 import { getErrorMessage, getInfoMessage } from '../utils'
 
 import {
-  setFormData, setFormErrors, setFormLoading, setLoading, setWaitForServer, setListInfoLoading,
-  setListErrorsTypeMime, setListScrapyErrors, setListHtmlErrors,
+  setFormData, setFormErrors, setFormLoading, setLoading, setWaitForServer,
+  setListInfoLoading, setListErrorsTypeMime, setListScrapyErrors, setListHtmlErrors,
   setListScannedFiles, setListExternalLinks, setListStatificationHistorics,
   setStatificationRunning, setStatificationProgress, setActiveStep, setsha,
   setListErrorErrorsTypeMime, setListErrorScrapyErrors, setListErrorHtmlErrors,
-  setListErrorScannedFiles, setListErrorExternalLinks, setListErrorStatificationHistorics, clearListErrorInfo, setClearInterval
+  setListErrorScannedFiles, setListErrorExternalLinks, setListErrorStatificationHistorics,
+  clearListErrorInfo, setClearInterval
 }
   from '../actions/statifications'
 import { setDialogOpen, setDialogTitle, setDialogText, setDialogTypeAction } from '../actions/dialog'
-import { statificationsCheckCurrentLog, listStatifications, countStatifications, statificationsLoadData } from '../actions/sagas'
+import { statificationsCheckCurrentLog, statificationsLoadData } from '../actions/statificationSagas'
+import { listStatifications, countStatifications } from '../actions/listSagas'
 
 /**
- * Method that treat the query to the server to load the data of a statification
- * @param  {[type]} sha the archive sha of the statification to get
- * @return {[type]}           json object of the statification
+ * Do the request to load the data of a statification
+ * @param  {string} sha the archive sha of the statification to get
+ * @return {Object}     json object of the statification
  */
-function loadData (sha) {
-  // create a promise to handle the answer of the server
-  return new Promise((resolve, reject) => {
+async function loadData (sha) {
+  try {
     // send the query
-    fetch(`/api/statification?sha=${sha}`, {
+    const response = await fetch(`/api/statification?sha=${sha}`, {
       method: 'POST',
       credentials: 'same-origin'
     })
-      .then((response) => {
-        response.json().then((data) => {
-          if (data.success !== false) {
-            resolve(data)
-          } else {
-            reject(new Error(data.error))
-          }
-        })
-      }).catch((error) => {
-        reject(error)
-      })
-  })
+
+    const data = await response.json()
+    if (data.success !== false) {
+      return data
+    } else {
+      throw new Error(data.error)
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- * Get a Statification object from the API given a archive sha,
+ * This Saga will get a Statification object from the API given an archive sha,
  * then load the datas of the statification into the page that list the informations
- * @param  {[type]}    action [description]
- * @return {Generator}        [description]
+ * @param  {Object}    action the action object that triggered the Saga
+ *                            it should have the following attributes :
+ *                             - {string} sha : the archive sha of the statification to load
  */
 function * loadDataSaga (action) {
   try {
@@ -75,7 +76,7 @@ function * loadDataSaga (action) {
       result: call(loadData, action.sha),
 
       // define the timeout in case the server take too long to answer
-      timeout: call(delay, 20000)
+      timeout: delay(20000)
     })
 
     // if we reach the timeout then throw an error
@@ -116,7 +117,6 @@ function * loadDataSaga (action) {
     if (result.statification_historics !== undefined) {
       yield put(setListStatificationHistorics(result.statification_historics))
     }
-
     // catch the HTML error send by the server
   } catch (error) {
     // print a corresponding message to the user
@@ -128,41 +128,76 @@ function * loadDataSaga (action) {
 }
 
 /**
- * [checkProcess description]
- * @return {[type]} [description]
+ * Do the request to get the status of the API
+ * @return {Object} the Object containing all the informations about the state of the API.
+ * The Object will contain the following attributes :
+    - isRunning         :   a boolean that indicate if a statification Process is running
+    - sha               :   a string that contain the sha of the last statification,
+                            if the last is a new and unsaved statification it will be empty
+    - designation       :   the designation of the last statification, or empty
+    - description       :   the description of the last statification, or empty
+    - status            :   the status of the last statification :  CREATED = 0
+                                                                    STATIFIED = 1
+                                                                    SAVED = 2
+                                                                    PRODUCTION = 3
+                                                                    VISUALIZED = 4
+                            Default status will be 3, if there is no statification in the database the user will still
+                            be able to create a new one, if there are ongoing statification to be push to prod it still
+                            give the hand to the user that have saved it.
+    - i_nb_item_to_crawl :  the number of item that have been crawled during the last statification, it will be used
+                            as a reference of the number of items to crawl to the next statification. If there is no
+                            statification in the database it will be set to 100 by default.
+    **Example**:
+
+      The default status when launching the api for the first time should be this one.
+      {
+          'isRunning': false,
+          'sha': '',
+          'designation': '',
+          'description': '',
+          'currentNbItemCrawled': 0,
+          'nbItemToCrawl': 100,
+          'status': 3,
+          'isLocked': false,
+          'statusBackground': {}
+      }
  */
-function checkStatusProcess () {
-  return new Promise((resolve, reject) => {
-    fetch('/api/statification/status', {
+async function checkStatusAPI () {
+  try {
+    const response = await fetch('/api/statification/status', {
       method: 'POST',
       credentials: 'same-origin',
       headers: new Headers({ 'Content-Type': 'application/json' })
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
+
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- * [checkStatusProcess description]
- * @return {[type]} [description]
+ * This Saga will get the status of the the API
+ * @param  {Object}    action the action object that triggered the Saga
+ *                            It should contain the following attributes:
+ *                             - {boolean} waitForServer : a boolean to know if we are waiting for the server to finish a long action (like save, visualize...).
  */
-function * checkStatusProcessSaga (action) {
+function * checkStatusAPISaga (action) {
   try {
     // send the submit request to the server
     const { result, timeout } = yield race({
-      result: call(checkStatusProcess),
-      timeout: call(delay, 8000)
+      result: call(checkStatusAPI),
+      timeout: delay(8000)
     })
-    if (timeout) { throw new Error('timeout') }
+    if (timeout) {
+      throw new Error('timeout')
+    }
 
     // open a popup and send user to create page if status is not 3 (published) or 2 (saved) or visualized
     if (result.status !== 4 && result.status !== 3 && result.status !== 2 && window.location.pathname.search('list') >= 0) {
@@ -255,35 +290,40 @@ function * checkStatusProcessSaga (action) {
 }
 
 /**
- *
- * [submitForm description]
- * @param  {[type]} data [description]
- * @return {[type]}      [description]
+ * Do the request to submit the form to create a new statification
+ * and start the statification process.
+ * @param  {Object} data the data of the form.
+ *                       It should contain the following attributes :
+ *                        - designation : the designation of the statification
+ *                        - description : the description of the statification
+ * @return {boolean}     return true if the operation is successful
  */
-function submitForm (data) {
-  return new Promise((resolve, reject) => {
-    fetch('/api/statification/start', {
+async function submitForm (dataToSend) {
+  try {
+    const response = await fetch('/api/statification/start', {
       method: 'POST',
       credentials: 'same-origin',
       headers: new Headers({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(data)
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data.success)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
+      body: JSON.stringify(dataToSend)
     })
-  })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data.success
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- * This method send the form to the API and start the statification process
- * @param  {[type]}    action the action object containing parameters
+ * This Saga will manage  method send the form to the API and start the statification process
+ * @param  {Object}    action the action object that triggered the Saga.
+ *                            It should contain the following attributes :
+ *                             - data : the object that contain the designation
+ *                                      and description of the statification
  */
 function * submitFormSaga (action) {
   try {
@@ -294,7 +334,7 @@ function * submitFormSaga (action) {
     // send the submit request to the server
     const { result, timeout } = yield race({
       result: call(submitForm, action.data),
-      timeout: call(delay, 120000)
+      timeout: delay(120000)
     })
     if (timeout) { throw new Error('timeout') }
     // if the process has started
@@ -320,35 +360,32 @@ function * submitFormSaga (action) {
 
 /**
  *
- * [checkProcess description]
- * @return {[type]} [description]
+ * Do the request to stop the statification process
+ * @return {Object} return true if there was no error on the API side
  */
-function stopProcess () {
-  return new Promise((resolve, reject) => {
-    fetch('/api/statification/stop', {
+async function stopProcess () {
+  try {
+    const response = await fetch('/api/statification/stop', {
       method: 'POST',
       credentials: 'same-origin',
       headers: new Headers({ 'Content-Type': 'application/json' })
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data.success
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- *
- * @param  {[type]}    action [description]
- * @return {Generator}        [description]
+ * This Saga will stop the statification process
  */
-function * stopProcessSaga (action) {
+function * stopProcessSaga () {
   try {
     // set the loading wheel in the stepper
     yield put(setLoading(true))
@@ -356,10 +393,15 @@ function * stopProcessSaga (action) {
     // send the submit request to the server
     const { result, timeout } = yield race({
       result: call(stopProcess),
-      timeout: call(delay, 120000)
+      timeout: delay(120000)
     })
     if (timeout) {
       throw new Error('timeout')
+    }
+
+    // if result is not true, an error happend somewhere
+    if (!result) {
+      throw new Error('unknown')
     }
 
     // catch the HTML error send by the server
@@ -375,31 +417,30 @@ function * stopProcessSaga (action) {
 }
 
 /**
- * [save description]
- * @return {[type]} [description]
+ * Do the request to save the new statification
+ * @return {Object} true if no error occured, otherwise will throw an error
  */
-function save () {
-  return new Promise((resolve, reject) => {
-    fetch('/api/statification/sha', {
+async function save () {
+  try {
+    const response = await fetch('/api/statification/save', {
       method: 'POST',
       credentials: 'same-origin'
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data.success
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- * [saveSaga description]
- * @return {Generator} [description]
+ * This Saga will save a statification by creating an archive with
+ * the source of the statification
  */
 function * saveSaga () {
   // set the loading wheel in the stepper
@@ -412,7 +453,7 @@ function * saveSaga () {
     // send the submit request to the server
     const { result, timeout } = yield race({
       result: call(save),
-      timeout: call(delay, 120000)
+      timeout: delay(120000)
     })
     if (timeout) { throw new Error('timeout') }
 
@@ -443,32 +484,32 @@ function * saveSaga () {
 }
 
 /**
- *
- * saveDataSaga is used to save the statif when preview is ok
- * @param  {[type]} sha          the archive sha of the statification to publish to production
+ * Will manage the request to the API to push the statification into production
+ * @param  {string} sha   the archive sha of the statification to publish to production
  */
-function pushToProd (sha) {
-  return new Promise((resolve, reject) => {
-    fetch(`/api/statification/pushtoprod?sha=${sha}`, {
+async function pushToProd (sha) {
+  try {
+    const response = await fetch(`/api/statification/pushtoprod?sha=${sha}`, {
       method: 'POST',
       credentials: 'same-origin'
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- * [checkStatusProcess description]
- * @return {[type]} [description]
+ * This Saga will push into production the given statification
+ * @param  {Object}    action the action object that triggered the Saga.
+ *                            It should contain the following attributes :
+ *                             - sha : the sha of the statification to push into production
  */
 function * pushToProdSaga (action) {
   // set the loading wheel in the stepper
@@ -481,9 +522,11 @@ function * pushToProdSaga (action) {
     // send the submit request to the server
     const { result, timeout } = yield race({
       result: call(pushToProd, action.sha),
-      timeout: call(delay, 120000)
+      timeout: delay(120000)
     })
-    if (timeout) { throw new Error('timeout') }
+    if (timeout) {
+      throw new Error('timeout')
+    }
 
     // restart setInterval
     yield put(setClearInterval(false))
@@ -510,32 +553,30 @@ function * pushToProdSaga (action) {
 }
 
 /**
- *
- * saveDataSaga is used to save the statif when the preview is ok
- * @param  {[type]} sha          the archive sha of the statification to visualize
+ * Do the request to save the statification
+ * @param  {string} sha  the archive sha of the statification to visualize
  */
-function visualize (sha) {
-  return new Promise((resolve, reject) => {
-    fetch(`/api/statification/visualize?sha=${sha}`, {
+async function visualize (sha) {
+  try {
+    const response = await fetch(`/api/statification/visualize?sha=${sha}`, {
       method: 'POST',
       credentials: 'same-origin'
-    }).then((response) => {
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
 /**
- * [checkStatusProcess description]
- * @return {[type]} [description]
+ * This Saga will deploy the wanted statification in the visualize directory
+ * @param  {Object}    action the action object that triggered the Saga.
  */
 function * visualizeSaga (action) {
   yield put(setLoading(true))
@@ -547,7 +588,7 @@ function * visualizeSaga (action) {
     // send the submit request to the server
     const { result, timeout } = yield race({
       result: call(visualize, action.sha),
-      timeout: call(delay, 120000)
+      timeout: delay(120000)
     })
     if (timeout) { throw new Error('timeout') }
 
@@ -576,36 +617,39 @@ function * visualizeSaga (action) {
 }
 
 /**
- *
- * [checkLogCurrentStatification description]
- * @return {[type]} [description]
+ * Manage the request to get the information of the new statification
+ * @return {Object} return an object containing the information of the new statification
  */
-function checkLogCurrentStatification () {
-  return new Promise((resolve, reject) => {
-    fetch('/api/statification/current', {
+async function checkLogCurrentStatification () {
+  try {
+    const response = await fetch('/api/statification/current', {
       method: 'POST',
       credentials: 'same-origin'
-    }).then((response) => {
-      // get json from response
-      response.json().then((data) => {
-        if (data.success === false) {
-          reject(new Error(data.error))
-        } else {
-          resolve(data)
-        }
-      })
-    }).catch((error) => {
-      reject(error)
     })
-  })
+    // get json from response
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
 }
 
+/**
+ * This Saga will get the information about the new statification, 
+ * it concern the errors that occured during the statification process 
+ * and the information like the mime type of file that have been crawled.
+ */
 function * checkLogCurrentStatificationSaga () {
   try {
     // send the submit request to the server
     const { result, timeout } = yield race({
       result: call(checkLogCurrentStatification),
-      timeout: call(delay, 20000)
+      timeout: delay(20000)
     })
     if (timeout) { throw new Error('timeout') }
 
@@ -660,7 +704,7 @@ function * watchStatificationsSagas () {
   yield takeEvery('SAGA_STATIFICATION_SUBMIT_FORM', submitFormSaga)
   yield takeEvery('SAGA_STATIFICATION_STOP_PROCESS', stopProcessSaga)
   yield takeEvery('SAGA_STATIFICATION_LOAD_DATA', loadDataSaga)
-  yield takeEvery('SAGA_STATIFICATION_CHECK_STATUS', checkStatusProcessSaga)
+  yield takeEvery('SAGA_STATIFICATION_CHECK_STATUS', checkStatusAPISaga)
   yield takeEvery('SAGA_STATIFICATION_SAVE', saveSaga)
   yield takeEvery('SAGA_STATIFICATION_PUSH_TO_PROD', pushToProdSaga)
   yield takeEvery('SAGA_STATIFICATION_VISUALIZE', visualizeSaga)

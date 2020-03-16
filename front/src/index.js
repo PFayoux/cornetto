@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -25,7 +25,7 @@ import { Route } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { connectRouter, ConnectedRouter, routerMiddleware } from 'connected-react-router'
 
-import createBrowserHistory from 'history/createBrowserHistory'
+import { createBrowserHistory } from 'history'
 
 import { compose, createStore, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
@@ -46,7 +46,6 @@ import Immutable from 'immutable'
 import statifications from './reducers/statifications'
 import errors from './reducers/errors'
 import dialog from './reducers/dialog'
-import options from './reducers/options'
 
 // import sagas
 import sagas from './sagas/sagas'
@@ -81,7 +80,7 @@ const config = {
     immutableTransform
   ],
   stateReconciler: immutableReconciler,
-  blacklist: ['i18n', 'form', 'errors']
+  blacklist: ['i18n', 'form', 'errors', 'router']
 }
 
 const initialState = {}
@@ -92,24 +91,24 @@ const sagaMiddleware = createSagaMiddleware()
 /**
  * Combine all reducers
  */
-const reducers = persistCombineReducers(config, {
+const rootReducer = (history) => persistCombineReducers(config, {
   statifications,
   errors,
-  options,
   dialog,
   i18n: i18nReducer,
-  form: formReducer
+  form: formReducer,
+  router: connectRouter(history)
 })
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const composeEnhancers = (typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose
+
 export const store = createStore(
-  connectRouter(history)(reducers),
+  rootReducer(history),
   initialState,
   composeEnhancers(applyMiddleware(sagaMiddleware, routingMiddleware, thunk))
 )
 
 export const persistor = persistStore(store, {}, () => {
-  console.log('test')
   sagaMiddleware.run(sagas)
 
   I18n.setTranslationsGetter(() => store.getState().i18n.translations)
@@ -120,7 +119,9 @@ export const persistor = persistStore(store, {}, () => {
   ReactDOM.render(
     <Provider store={store}>
       <ConnectedRouter history={history}>
-        <Route path='/' component={AppContainer} />
+        <Route path='/'>
+          <AppContainer />
+        </Route>
       </ConnectedRouter>
     </Provider>,
     document.getElementById('root')

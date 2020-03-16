@@ -2,9 +2,9 @@
 """
 Cornetto
 
-Copyright (C) 2018–2019 ANSSI
+Copyright (C) 2018–2020 ANSSI
 Contributors:
-2018–2019 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
+2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -495,7 +495,7 @@ def do_apply_prod() -> Dict[str, Any]:
         }
 
 
-@bp.route('/api/statification/sha', methods=["POST", "GET"])
+@bp.route('/api/statification/save', methods=["POST", "GET"])
 @build_json()
 @user_required
 def do_save() -> Dict[str, Any]:

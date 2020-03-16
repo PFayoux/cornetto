@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -19,14 +19,14 @@ import { push } from 'react-router-redux'
 
 import StatificationList from '../../components/statifications/StatificationList'
 import { setLimit, setSkip } from '../../actions/statifications'
-import { listStatifications, countStatifications } from '../../actions/sagas'
+import { listStatifications, countStatifications } from '../../actions/listSagas'
 
 const mapStateToProps = (state, props) => ({
   limit: state.statifications.get('limit'),
   skip: state.statifications.get('skip'),
   list: state.statifications.get('list'),
   count: state.statifications.get('count'),
-  loading: state.statifications.getIn('loading'),
+  loading: state.statifications.get('loading'),
   current: state.statifications.get('current')
 })
 

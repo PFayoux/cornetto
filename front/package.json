@@ -37,7 +37,7 @@
     "remotedev-serialize": "^0.1.8",
     "whatwg-fetch": "^3.0.0"
   },
-  "proxy": "http://localhost:8000",
+  "proxy": "http://localhost:8000/",
   "devDependencies": {
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.0",
@@ -45,14 +45,15 @@
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.18.3",
+    "eslint-plugin-react": "^7.19.0",
     "eslint-plugin-standard": "^4.0.1"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "lint": "eslint -c .eslintrc.js .",
+    "lint-fix": "eslint --fix -c .eslintrc.js ."
   },
   "repository": {
     "type": "git",
@@ -63,7 +64,6 @@
   "bugs": {
     "url": "https://github.com/ANSSI-FR/cornetto/issues"
   },
-  "homepage": "https://github.com/ANSSI-FR/cornetto#readme",
   "browserslist": {
     "production": [
       ">0.2%",

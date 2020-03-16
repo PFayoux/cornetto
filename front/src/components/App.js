@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -55,28 +55,26 @@ class App extends React.PureComponent {
     setInterval(this.props.checkStatus, 6000, this.props.activeState, this.props.waitForServer)
   }
 
-  componentWillReceiveProps (props) {
-    if (props.statificationRunning === false) {
+  componentWillUpdate (nextProps, nextState) {
+    if (nextProps.statificationRunning === false) {
       this.props.setIsBeingStopped(false)
     }
 
     // clear all the interval that have been set
     clearAllSetInterval()
 
-    if (!props.clearInterval) {
+    if (!nextProps.clearInterval) {
       // start a new interval to check for the status of api
-      setInterval(this.props.checkStatus, 6000, props.activeStep, props.waitForServer)
+      setInterval(this.props.checkStatus, 6000, nextProps.activeStep, nextProps.waitForServer)
     }
 
     // if something is loading change the cursor to wait
-    if (props.loading) {
+    if (nextProps.loading) {
       document.getElementById('root').classList.add('wait')
     } else {
       // if nothing is loading remove the class
       document.getElementById('root').classList.remove('wait')
     }
-
-    return props
   }
 
   onTabChange (e, value) {
@@ -109,18 +107,16 @@ class App extends React.PureComponent {
             </Tabs>
           </Toolbar>
         </header>
-        { (this.props.islistErrorSet === 0) &&
-        <main className='wrapper'>
-          <Route path='/' component={StatificationCreateContainer} exact />
-          <Route path='/create' component={StatificationCreateContainer} />
-          <Route path='/list' component={StatificationHome} />
-        </main>
-        }
+        {(this.props.islistErrorSet === 0) &&
+          <main className='wrapper'>
+            <Route path='/' component={StatificationCreateContainer} exact />
+            <Route path='/create' component={StatificationCreateContainer} />
+            <Route path='/list' component={StatificationHome} />
+          </main>}
         {(this.props.islistErrorSet !== 0 && this.props.activeStep === 1) &&
-        <main className='showlog'>
-          <StatificationPopupPageErrorContainer />
-        </main>
-        }
+          <main className='showlog'>
+            <StatificationPopupPageErrorContainer />
+          </main>}
         <footer className='footer'>
           <nav>
             <center>Contactez le <span className='bold'>CDA</span> au <span className='bold'>8900</span> en cas d'erreur bloquante.</center>

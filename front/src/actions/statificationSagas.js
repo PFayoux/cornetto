@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -32,11 +32,13 @@ export const statificationsSubmitForm = data => ({
  * @param  {[type]} step the step that is currently set in the application
  * @param  {[type]} waitForServer if client is waiting for the server
  */
-export const statificationsCheckStatus = (step, waitForServer) => ({
-  type: 'SAGA_STATIFICATION_CHECK_STATUS',
-  step,
-  waitForServer
-})
+export const statificationsCheckStatus = (step, waitForServer) => {
+  return ({
+    type: 'SAGA_STATIFICATION_CHECK_STATUS',
+    step,
+    waitForServer
+  })
+}
 
 /**
 * Call the saga SAGA_STATIFICATION_STOP_PROCESS
@@ -84,22 +86,4 @@ export const statificationsPushToProd = sha => ({
 export const statificationsVisualize = sha => ({
   type: 'SAGA_STATIFICATION_VISUALIZE',
   sha
-})
-
-/**
- * Call the saga SAGA_LIST_STATIFICATIONS with the needed parameters
- * @param  {[type]} limit the number of statification to show/get per page in the list
- * @param  {[type]} skip  the number of statification to skip before requesting new statification
- */
-export const listStatifications = (limit, skip) => ({
-  type: 'SAGA_LIST_STATIFICATIONS',
-  limit,
-  skip
-})
-
-/**
- * Call the saga SAGA_LIST_STATIFICATIONS_COUNT
- */
-export const countStatifications = () => ({
-  type: 'SAGA_LIST_STATIFICATIONS_COUNT'
 })

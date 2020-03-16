@@ -2,9 +2,9 @@
 """
 Cornetto
 
-Copyright (C) 2018–2019 ANSSI
+Copyright (C) 2018–2020 ANSSI
 Contributors:
-2018–2019 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
+2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -36,49 +36,14 @@ setup(
     python_requires=">=3.4",
     py_modules=['wsgi', 'scrapy_cmd'],
     install_requires=[
-        'Automat',
         'Flask',
         'Flask-SQLAlchemy',
-        'Jinja2',
-        'MarkupSafe',
         'Pillow',
-        'PyDispatcher',
         'SQLAlchemy',
         'Scrapy',
-        'Twisted',
-        'Werkzeug',
-        'asn1crypto',
-        'attrs',
-        'cffi',
-        'characteristic',
-        'chardet',
-        'click',
-        'colorama',
-        'constantly',
-        'cryptography',
-        'cssselect',
-        'html5lib',
-        'hyperlink',
-        'idna',
-        'incremental',
-        'itsdangerous',
         'lxml',
-        'olefile',
-        'parsel',
-        'ply',
-        'pyOpenSSL',
-        'pyasn1',
-        'pyasn1-modules',
-        'pycparser',
-        'queuelib',
         'requests',
-        'service-identity',
         'sh',
-        'six',
         'typing',
-        'update',
-        'urllib3',
-        'w3lib',
-        'zope.interface'
     ]
 )

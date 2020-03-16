@@ -1,9 +1,9 @@
 /*
  Cornetto
 
- Copyright (C) 2018–2019 ANSSI
+ Copyright (C)  2018–2020 ANSSI
  Contributors:
- 2018–2019 Paul Fayoux paul.fayoux@ssi.gouv.fr
+ 2018–2020 Bureau Applicatif tech-sdn-app@ssi.gouv.fr
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -18,7 +18,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import { setDialogOpen } from '../../actions/dialog'
 import StatificationDialog from '../../components/statifications/StatificationDialog'
-import { statificationsStopProcess } from '../../actions/sagas'
+import { statificationsStopProcess } from '../../actions/statificationSagas'
 import { setActiveStep, setUrl, setStatificationIsBeingStopped } from '../../actions/statifications'
 
 const mapStateToProps = (state, props) => ({
