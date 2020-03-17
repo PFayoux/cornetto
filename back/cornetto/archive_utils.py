@@ -81,13 +81,12 @@ def execute_the_push_to_prod_script(s_archive_sha, s_path_to_the_push_to_prod_sc
 
 def extract_archive_to_directory(s_archive_sha, s_path_to_archive_directory, s_path_to_destination_directory):
     """
-    Extract an archive to the wanted directory.
-    This is used in to visualize a previous statification.
+    Extract an archive to the wanted directory. This is used in to visualize a previous statification.
     @param s_archive_sha: the sha of the archive
     @param s_path_to_archive_directory: the path to archive directory
     @param s_path_to_destination_directory: the path to the directory where to extract the archive
     """
-    s_archive_path = s_path_to_archive_directory+'/'+s_archive_sha+'.tar.gz'
-    for log in tar('-xf', s_archive_path, s_path_to_destination_directory, _cwd=s_path_to_archive_directory,
+    s_archive_path = os.path.join(s_path_to_archive_directory, s_archive_sha+'.tar.gz')
+    for log in tar('-xf', s_archive_path, '-C', s_path_to_destination_directory, '--strip-components=1', _cwd=s_path_to_archive_directory,
                    _tty_out=False, _iter='err'):
         logger.error(log)
