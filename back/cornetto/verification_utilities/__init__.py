@@ -29,8 +29,9 @@ def valid_sha(s_archive_sha: str, a_list_sha: List[str]) -> None:
     """
     # verify if s_archive_sha is not null, is 40 characters long and is only composed of alphanumerical character
     # and that it exist in the given list of Sha
-    if not (a_list_sha and s_archive_sha and len(s_archive_sha) == 40 and re.match(r'[a-zA-Z0-9]{40}', s_archive_sha) and (
-            s_archive_sha in a_list_sha)):
+    if not (a_list_sha and s_archive_sha and len(s_archive_sha) == 40
+            and re.match(r'[a-zA-Z0-9]{40}', s_archive_sha)
+            and (s_archive_sha in a_list_sha)):
         raise SyntaxError("The parameter does not respect the sha ID policies, value : " + s_archive_sha)
 
 

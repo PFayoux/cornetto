@@ -30,6 +30,7 @@ def create_archive_and_rename_to_sha(s_static_repository: str,
                                      s_archive_repository: str) -> str:
     """
     Create a new .tar.gz archive from the given s_static_repository.
+
     The archive is renamed with the sha and is moved to the s_archive_repository
     @param s_static_repository: the path to the directory of the statification
     @param s_archive_repository: the path to the directory that contain all the archive

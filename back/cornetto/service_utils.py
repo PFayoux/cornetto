@@ -16,6 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 """
 import os
+import glob
 from os.path import isfile, join
 import logging
 import errno
@@ -199,13 +200,11 @@ def service_do_clean_directory(s_repository: str):
     logger.info('> Static repository initialization ...')
     logger.debug('repository clean : ' + s_repository)
 
-    # Select the static directory
-    empty_static_directory = rm.bake('-rf', './*', _cwd=s_repository, _tty_out=False, _iter='out')
-
-    # if the STATIC_REPOSITORY doesn't exist
     if not os.path.isdir(s_repository):
         logger.error('the static repository doesn\'t exist ' + s_repository)
+        raise NotADirectoryError('the static repository doesn\'t exist ' + s_repository)
 
-    empty_static_directory()
+    # remove the content of the directory
+    logger.info(rm('-r', '-f', glob.glob(join(s_repository, './*')), _cwd=s_repository, _tty_out=False))
 
     logger.info('> Static repository initialization terminated')

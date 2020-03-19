@@ -15,7 +15,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 """
-
+import os
 import logging
 import sys
 
@@ -33,6 +33,10 @@ __version__ = '1.0'
 
 
 def init_logger(app: Flask):
+    """
+    This method initialize the logger
+    @param app: the Flask app
+    """
     sqlalchemy_logger = logging.getLogger('sqlalchemy.engine')
 
     log_level = logging.INFO
@@ -75,6 +79,32 @@ def init_logger(app: Flask):
     app.logger.info('Encoding : ' + getpreferredencoding())
 
 
+def verify_directories_exist(app: Flask):
+    """
+    This method will checks existence of the required files and directories,
+    if one them is not found this will interrupt the program
+    @param app: the Flask app
+    """
+    # create log dir if it doesn't exist
+    if not os.path.isdir(os.path.dirname(app.config['API_LOGFILE'])):
+        os.makedirs(os.path.dirname(app.config['API_LOGFILE']))
+
+    if not os.path.isdir(app.config['STATIC_REPOSITORY']):
+        raise NotADirectoryError('Directory '+ app.config['STATIC_REPOSITORY'] + ' does not exist.')
+
+    if not os.path.isdir(app.config['VISUALIZE_REPOSITORY']):
+        raise NotADirectoryError('Directory '+ app.config['VISUALIZE_REPOSITORY'] + ' does not exist.')
+
+    if not os.path.isdir(app.config['ARCHIVE_REPOSITORY']):
+        raise NotADirectoryError('Directory '+ app.config['ARCHIVE_REPOSITORY'] + ' does not exist.')
+
+    if not os.path.isdir(app.config['PROJECT_DIRECTORY']):
+        raise NotADirectoryError('Directory '+ app.config['PROJECT_DIRECTORY'] + ' does not exist.')
+
+    if not os.path.isfile(app.config['PUSH_TO_PROD_SCRIPT']):
+        raise FileNotFoundError('THe file ' + app.config['PUSH_TO_PROD_SCRIPT'] + ' does not exist.')
+
+
 def create_app(config_file_path: str = None, config_dict: Dict[str, Any] = None):
     """
     This method will create a new flask application with the wanted config.
@@ -89,6 +119,9 @@ def create_app(config_file_path: str = None, config_dict: Dict[str, Any] = None)
     elif config_dict:
         # update config from dict
         app.config.update(config_dict)
+
+    # verify directories set in the config files exists
+    verify_directories_exist(app)
 
     if __name__ != '__main__':
         init_logger(app)
