@@ -27,16 +27,22 @@ from cornetto import create_app
 config = {
     'DEBUG': True,
     'LOGLEVEL': 'INFO',
-    'STATIC_REPOSITORY': '',
+    'STATIC_REPOSITORY': '/tmp/',
+    'ARCHIVE_REPOSITORY': '/tmp/',
+    'VISUALIZE_REPOSITORY': '/tmp/',
+    'PUSH_TO_PROD_SCRIPT': '/tmp/test.sh',
+    'PYTHONPATH': '../venv/lib/python3.6/site-packages/', 
     'URL_GIT': '',
     'URLS': '',
     'DOMAINS': '',
-    'LOGFILE': 'tests/statif.log',
-    'PROJECT_DIRECTORY': 'cornettto',
-    'PIDFILE': 'tests/.pid.data',
-    'LOCKFILE': 'tests/.lock_access',
-    'STATUS_BACKGROUND': 'tests/.status_background.json',
-    'CRAWLER_PROGRESS_COUNTER_FILE': 'tests/.crawlerProgressCounterFile.txt',
+    'API_LOGFILE': '/tmp/api.log',
+    'LOGDIR': '/tmp/',
+    'LOGFILE': '/tmp/statif.log',
+    'PROJECT_DIRECTORY': './cornetto',
+    'PIDFILE': '/tmp/.pid.data',
+    'LOCKFILE': '/tmp/.lock_access',
+    'STATUS_BACKGROUND': '/tmp/.status_background.json',
+    'CRAWLER_PROGRESS_COUNTER_FILE': '/tmp/.crawlerProgressCounterFile.txt',
     'DELETE_FILES': '',
     'DELETE_DIRECTORIES': '',
     'URL_REGEX': '(https?://)?web(.your-private-domain.com/?)?',
@@ -53,7 +59,10 @@ def setup_module():
 
 
 @pytest.yield_fixture()
-def setup_fonction():
+def setup_fonction(): 
+    test_file = open('/tmp/test.sh', 'w')
+    test_file.write('echo "test"')
+    test_file.close()
     app = create_app(None, config)
     yield {
         'client': app.test_client(),
