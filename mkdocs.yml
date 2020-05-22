@@ -1,1 +1,23 @@
 site_name: Cornetto
+site_url: https://github.com/ANSSI-FR/cornetto
+site_description: Cornetto - the tool to create and manage statification.
+site_author: Cornetto Team
+
+repo_url: https://github.com/ANSSI-FR/cornetto
+edit_uri: ""
+
+theme:
+    name: cornetto
+    highlightjs: true
+    hljs_languages:
+        - flask
+
+nav:
+    - Home: index.md
+
+extra_css:
+    - css/extra.css
+
+plugins:
+    - search
+
