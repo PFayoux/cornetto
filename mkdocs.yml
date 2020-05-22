@@ -7,7 +7,7 @@ repo_url: https://github.com/ANSSI-FR/cornetto
 edit_uri: ""
 
 theme:
-    name: cornetto
+    name: mkdocs
     highlightjs: true
     hljs_languages:
         - flask
