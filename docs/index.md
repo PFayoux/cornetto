@@ -31,8 +31,8 @@ This documentation is not finished, it's in the process of being written.
 
 ## Screenshot
 
-![Cornetto](../ressources/screenshots/screenshot1.png)
-![Cornetto](../ressources/screenshots/screenshot2.png)
+![Cornetto](./ressources/screenshots/screenshot1.png)
+![Cornetto](./ressources/screenshots/screenshot2.png)
 
 
 ## Features
