@@ -26,12 +26,106 @@ import {
   setStatificationRunning, setStatificationProgress, setActiveStep, setsha,
   setListErrorErrorsTypeMime, setListErrorScrapyErrors, setListErrorHtmlErrors,
   setListErrorScannedFiles, setListErrorExternalLinks, setListErrorStatificationHistorics,
-  clearListErrorInfo, setClearInterval
+  clearListErrorInfo, setClearInterval, setList, setCount
 }
   from '../actions/statifications'
 import { setDialogOpen, setDialogTitle, setDialogText, setDialogTypeAction } from '../actions/dialog'
-import { statificationsCheckCurrentLog, statificationsLoadData } from '../actions/statificationSagas'
-import { listStatifications, countStatifications } from '../actions/listSagas'
+
+/**
+ *
+ * Do the request to get the list of statification
+ * @param  {number} limit the maximum of statification to get
+ * @param  {number} skip  the number of statification to skip in the query
+ * @return {Array}       return an Array of statification Object
+ */
+async function listStatifications (limit, skip) {
+  try {
+    const url = `/api/statification/list?limit=${limit}&skip=${skip}`
+    const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin'
+    })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data.statifications
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+/**
+ * This Saga will get the list of statification
+ * @param  {Object}    action the action object that triggered the Saga
+ */
+function * listStatificationsSaga (action) {
+  try {
+    yield put(setLoading(true))
+
+    const { result, timeout } = yield race({
+      result: call(listStatifications, action.limit, action.skip),
+      timeout: delay(20000)
+    })
+
+    if (timeout) {
+      throw new Error('timeout')
+    }
+
+    yield put(setLoading(false))
+    // set the list inside the statifications reducer
+    yield put(setList(result))
+  } catch (error) {
+    yield put(setLoading(false))
+    yield put(pushError(getErrorMessage(error)))
+  }
+}
+
+/**
+ *
+ * Do the request to get the number of statification
+ * @return {number} return the number of statification in the database
+ */
+async function countStatifications () {
+  try {
+    const url = '/api/statification/count'
+    const response = await fetch(url, {
+      method: 'POST',
+      credentials: 'same-origin'
+    })
+    const data = await response.json()
+    if (data.success === false) {
+      throw new Error(data.error)
+    } else {
+      return data.count
+    }
+  } catch (error) {
+    console.log(error)
+    throw error
+  }
+}
+
+/**
+ * This Saga will get the number of Statification
+ * @param  {Object}    action the action object that triggered the Saga
+ */
+function * countStatificationsSaga (action) {
+  try {
+    const { result, timeout } = yield race({
+      result: call(countStatifications),
+      timeout: delay(20000)
+    })
+    if (timeout) {
+      throw new Error('timeout')
+    }
+
+    yield put(setCount(result))
+  } catch (error) {
+    yield put(pushError(getErrorMessage(error)))
+  }
+}
 
 /**
  * Do the request to load the data of a statification
@@ -171,11 +265,7 @@ async function checkStatusAPI () {
     })
 
     const data = await response.json()
-    if (data.success === false) {
-      throw new Error(data.error)
-    } else {
-      return data
-    }
+    return data
   } catch (error) {
     console.log(error)
     throw error
@@ -244,14 +334,14 @@ function * checkStatusAPISaga (action) {
     } else {
       // when the statification process is finished and if current step is not 1 and not 2, check the logs of the statification
       if (result.status === 1 && action.step !== 1 && action.step !== 2) {
-        yield put(statificationsCheckCurrentLog())
+        yield checkLogCurrentStatification()
       } else if (action.waitForServer === true && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'pushtoprod' && result.statusBackground.sha) {
         // case pushToProd
         // refresh the list and count
-        yield put(countStatifications())
-        yield put(listStatifications())
+        yield countStatifications()
+        yield listStatifications()
         // refresh list statification
-        yield put(statificationsLoadData(result.statusBackground.sha))
+        yield loadDataSaga({ sha: result.statusBackground.sha })
         // redirect user to step 0
         yield put(setActiveStep(0))
         // open in a new tab the push to prod statification
@@ -261,7 +351,7 @@ function * checkStatusAPISaga (action) {
         yield put(countStatifications())
         yield put(listStatifications())
         // refresh visualized statification
-        yield put(statificationsLoadData(result.statusBackground.sha))
+        yield loadDataSaga({ sha: result.statusBackground.sha })
         // open in a new tab the visualized statification
         yield window.open(I18n.t('url.site_visualize'), '_blank').focus()
       } else if (result.status === 2 && result.statusBackground && result.statusBackground.success && result.statusBackground.operation === 'save' && action.step === 2) {
@@ -701,6 +791,8 @@ function * checkLogCurrentStatificationSaga () {
  * @return {Generator} [description]
  */
 function * watchStatificationsSagas () {
+  yield takeEvery('SAGA_LIST_STATIFICATIONS', listStatificationsSaga)
+  yield takeEvery('SAGA_LIST_STATIFICATIONS_COUNT', countStatificationsSaga)
   yield takeEvery('SAGA_STATIFICATION_SUBMIT_FORM', submitFormSaga)
   yield takeEvery('SAGA_STATIFICATION_STOP_PROCESS', stopProcessSaga)
   yield takeEvery('SAGA_STATIFICATION_LOAD_DATA', loadDataSaga)

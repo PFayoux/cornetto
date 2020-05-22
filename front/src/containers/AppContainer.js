@@ -19,7 +19,7 @@ import { push } from 'react-router-redux'
 import App from '../components/App'
 import { setUrl, setStatificationIsBeingStopped } from '../actions/statifications'
 import { setDialogOpen, setDialogTitle, setDialogText, setDialogTypeAction } from '../actions/dialog'
-import { statificationsCheckStatus } from '../actions/statificationSagas'
+import { statificationsCheckStatus } from '../actions/sagas'
 
 /**
  * This method is used to get the tab corresponding to the url passed in parameter

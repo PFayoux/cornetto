@@ -16,11 +16,9 @@
  */
 import { all } from 'redux-saga/effects'
 import watchStatificationsSagas from './statifications'
-import watchListSagas from './list'
 
 export default function * sagas () {
   yield all([
-    watchListSagas(),
     watchStatificationsSagas()
   ])
 }

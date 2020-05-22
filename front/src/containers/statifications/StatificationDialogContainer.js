@@ -18,7 +18,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux'
 import { setDialogOpen } from '../../actions/dialog'
 import StatificationDialog from '../../components/statifications/StatificationDialog'
-import { statificationsStopProcess } from '../../actions/statificationSagas'
+import { statificationsStopProcess } from '../../actions/sagas'
 import { setActiveStep, setUrl, setStatificationIsBeingStopped } from '../../actions/statifications'
 
 const mapStateToProps = (state, props) => ({

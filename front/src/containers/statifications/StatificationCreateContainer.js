@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 import StatificationCreate from '../../components/statifications/StatificationCreate'
 
 import { setActiveStep, newForm } from '../../actions/statifications'
-import { statificationsSave, statificationsPushToProd } from '../../actions/statificationSagas'
+import { statificationsSave, statificationsPushToProd } from '../../actions/sagas'
 import { setDialogOpen, setDialogTitle, setDialogText, setDialogTypeAction } from '../../actions/dialog'
 
 const mapStateToProps = (state, props) => ({

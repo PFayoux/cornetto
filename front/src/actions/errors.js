@@ -15,10 +15,9 @@
  You should have received a copy of the GNU General Public License
  */
 /**
- * [pushError description]
- * @param  {String} message       [description]
- * @param  {String} [severity='error'] [description]
- * @return {[type]}                    [description]
+ * Set a new error in the list of error
+ * @param  {String} message       The message of the error
+ * @param  {String} [severity='error'] The level of severity of the error
  */
 export const pushError = (message, severity = 'error') => ({
   type: 'ERROR_PUSH',
@@ -27,9 +26,8 @@ export const pushError = (message, severity = 'error') => ({
 })
 
 /**
- * [dismissError description]
- * @param  {[type]} position [description]
- * @return {[type]}          [description]
+ * Dismiss the error at the given position
+ * @param  {[type]} position the index of the error
  */
 export const dismissError = position => ({
   type: 'ERROR_DISMISS',
@@ -37,8 +35,7 @@ export const dismissError = position => ({
 })
 
 /**
- * [clearErrors description]
- * @return {[type]} [description]
+ * Clear all errors
  */
 export const clearErrors = () => ({
   type: 'ERROR_CLEAR_ALL'

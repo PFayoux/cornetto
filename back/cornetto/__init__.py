@@ -102,7 +102,7 @@ def verify_directories_exist(app: Flask):
         raise NotADirectoryError('Directory '+ app.config['PROJECT_DIRECTORY'] + ' does not exist.')
 
     if not os.path.isfile(app.config['PUSH_TO_PROD_SCRIPT']):
-        raise FileNotFoundError('THe file ' + app.config['PUSH_TO_PROD_SCRIPT'] + ' does not exist.')
+        raise FileNotFoundError('The file ' + app.config['PUSH_TO_PROD_SCRIPT'] + ' does not exist.')
 
 
 def create_app(config_file_path: str = None, config_dict: Dict[str, Any] = None):

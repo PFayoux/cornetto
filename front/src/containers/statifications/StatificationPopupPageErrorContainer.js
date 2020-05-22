@@ -16,7 +16,7 @@
  */
 import { connect } from 'react-redux'
 import { setActiveStep, clearListErrorInfo, setActiveAccordeon } from '../../actions/statifications'
-import { statificationsStopProcess } from '../../actions/statificationSagas'
+import { statificationsStopProcess } from '../../actions/sagas'
 import StatificationPopupPageError
   from '../../components/statifications/StatificationPopupPageError'
 

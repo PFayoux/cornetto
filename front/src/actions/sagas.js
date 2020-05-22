@@ -19,6 +19,24 @@
  */
 
 /**
+ * Call the saga SAGA_LIST_STATIFICATIONS with the needed parameters
+ * @param  {[type]} limit the number of statification to show/get per page in the list
+ * @param  {[type]} skip  the number of statification to skip before requesting new statification
+ */
+export const listStatifications = (limit, skip) => ({
+  type: 'SAGA_LIST_STATIFICATIONS',
+  limit,
+  skip
+})
+
+/**
+ * Call the saga SAGA_LIST_STATIFICATIONS_COUNT
+ */
+export const countStatifications = () => ({
+  type: 'SAGA_LIST_STATIFICATIONS_COUNT'
+})
+
+/**
  * Call the saga SAGA_STATIFICATION_SUBMIT_FORM with the needed parameters
  * @param  {[type]} data contain the designation and description of the statification set in the form
  */

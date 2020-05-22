@@ -20,7 +20,7 @@ import { initialize, reset, submit } from 'redux-form/immutable'
 import StatificationForm from '../../components/statifications/StatificationForm'
 import { newForm } from '../../actions/statifications'
 import { setDialogOpen, setDialogTitle, setDialogText, setDialogTypeAction } from '../../actions/dialog'
-import { statificationsSubmitForm, statificationsCheckStatus } from '../../actions/statificationSagas'
+import { statificationsSubmitForm, statificationsCheckStatus } from '../../actions/sagas'
 
 const mapStateToProps = (state, props) => ({
   data: state.statifications.get('form', null),

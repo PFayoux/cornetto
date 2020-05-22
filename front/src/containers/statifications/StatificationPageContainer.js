@@ -18,7 +18,7 @@ import { connect } from 'react-redux'
 
 import StatificationPage
   from '../../components/statifications/StatificationPage'
-import { statificationsPushToProd, statificationsVisualize, statificationsLoadData } from '../../actions/statificationSagas'
+import { statificationsPushToProd, statificationsVisualize, statificationsLoadData } from '../../actions/sagas'
 import { setCurrent, setActiveAccordeon } from '../../actions/statifications'
 
 const mapStateToProps = (state, props) => ({

@@ -19,7 +19,7 @@ import { push } from 'react-router-redux'
 
 import StatificationList from '../../components/statifications/StatificationList'
 import { setLimit, setSkip } from '../../actions/statifications'
-import { listStatifications, countStatifications } from '../../actions/listSagas'
+import { listStatifications, countStatifications } from '../../actions/sagas.js'
 
 const mapStateToProps = (state, props) => ({
   limit: state.statifications.get('limit'),
